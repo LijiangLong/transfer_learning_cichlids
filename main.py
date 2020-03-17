@@ -6,8 +6,11 @@ import torch
 from torch import nn
 from torch import optim
 from torch.optim import lr_scheduler
+from torch.autograd import Variable
 import pdb
 import pandas as pd
+import time
+
 
 from opts import parse_opts
 from model import generate_model
@@ -19,10 +22,81 @@ from temporal_transforms import LoopPadding, TemporalRandomCrop, TemporalCenterC
 from target_transforms import ClassLabel, VideoID
 from target_transforms import Compose as TargetCompose
 from dataset import get_training_set, get_validation_set, get_test_set
-from utils import Logger
-from train import train_epoch
+from utils import Logger,AverageMeter, calculate_accuracy
 from validation import val_epoch
-import test
+
+
+
+
+
+def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
+                epoch_logger, batch_logger):
+    print('train at epoch {}'.format(epoch))
+    model.train()
+
+    batch_time = AverageMeter()
+    data_time = AverageMeter()
+    losses = AverageMeter()
+    accuracies = AverageMeter()
+
+    end_time = time.time()
+    for i, (inputs, targets, paths) in enumerate(data_loader):
+        data_time.update(time.time() - end_time)
+        if not opt.no_cuda:
+            targets = targets.cuda(async=True)
+        out_str = []
+        for clip_data in range(inputs.shape[0]):
+            for color in range(inputs.shape[1]):
+                out_str.append(inputs[clip_data][color].mean())
+
+        inputs = Variable(inputs)
+        targets = Variable(targets)
+        outputs = model(inputs)
+        loss = criterion(outputs, targets)
+        acc = calculate_accuracy(outputs, targets)
+
+        losses.update(loss.item(), inputs.size(0))
+        accuracies.update(acc, inputs.size(0))
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        batch_time.update(time.time() - end_time)
+        end_time = time.time()
+
+        batch_logger.log({
+            'epoch': epoch,
+            'batch': i + 1,
+            'iter': (epoch - 1) * len(data_loader) + (i + 1),
+            'loss': losses.val,
+            'acc': accuracies.val,
+            'lr': optimizer.param_groups[0]['lr'],
+            'means': ','.join([str(x) for x in out_str])
+        })
+
+        print('Epoch: [{0}][{1}/{2}]\t'
+              'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
+              'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
+              'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
+              'Acc {acc.val:.3f} ({acc.avg:.3f})'.format(
+                  epoch,
+                  i + 1,
+                  len(data_loader),
+                  batch_time=batch_time,
+                  data_time=data_time,
+                  loss=losses,
+                  acc=accuracies))
+    epoch_logger.log({
+        'epoch': epoch,
+        'loss': losses.avg,
+        'acc': accuracies.avg,
+        'lr': optimizer.param_groups[0]['lr']
+    })
+
+    if epoch % opt.checkpoint == 0:
+        save_file_path = os.path.join(opt.result_path,
+                                      'save_{}.pth'.format(epoch))
 
 
 if __name__ == '__main__':
