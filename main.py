@@ -14,7 +14,7 @@ import time
 
 
 from opts import parse_opts
-from model import generate_model
+from resnet import resnet18
 from mean import get_mean, get_std
 from spatial_transforms import (
     Compose, Normalize, Scale, CenterCrop, CornerCrop, MultiScaleCornerCrop,
@@ -189,7 +189,12 @@ if __name__ == '__main__':
     #    json.dump(vars(opt), opt_file)
 
     torch.manual_seed(opt.manual_seed)
-    model = torchvision.models.video.r3d_18(pretrained=True, progress=True)
+    model = resnet18(
+                num_classes=opt.n_classes,
+                shortcut_type=opt.resnet_shortcut,
+                sample_size=opt.sample_size,
+                sample_duration=opt.sample_duration,
+                t_stride=opt.t_stride)
     if not opt.no_cuda:
         model = model.cuda()
         model = nn.DataParallel(model, device_ids=None)
