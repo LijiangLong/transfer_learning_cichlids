@@ -40,7 +40,7 @@ def parse_opts():
         help='Annotation file path')
     parser.add_argument(
         '--result_path',
-        default='results_3_14',
+        default='results_3_17',
         type=str,
         help='Result directory path')
     parser.add_argument(
@@ -230,7 +230,7 @@ def parse_opts():
         help='(resnet | preresnet | wideresnet | resnext | densenet | ')
     parser.add_argument(
         '--model_depth',
-        default=34,
+        default=18,
         type=int,
         help='Depth of resnet (10 | 18 | 34 | 50 | 101)')
     parser.add_argument(
