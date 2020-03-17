@@ -3,6 +3,7 @@ import sys
 import json
 import numpy as np
 import torch
+import torchvision
 from torch import nn
 from torch import optim
 from torch.optim import lr_scheduler
@@ -182,49 +183,23 @@ if __name__ == '__main__':
         opt.result_path = os.path.join(opt.root_path, opt.result_path)
         if opt.resume_path:
             opt.resume_path = os.path.join(opt.root_path, opt.resume_path)
-        #if opt.pretrain_path:
-        #    opt.pretrain_path = os.path.join(opt.root_path, opt.pretrain_path)
-    #opt.scales = [opt.initial_scale]
-    #for i in range(1, opt.n_scales):
-    #    opt.scales.append(opt.scales[-1] * opt.scale_step)
     opt.arch = '{}-{}'.format(opt.model, opt.model_depth)
-    
-    #opt.mean = get_mean(opt.norm_value, dataset=opt.mean_dataset)
-    #opt.std = get_std(opt.norm_value, dataset=opt.mean_dataset)
     print(opt)
     #with open(os.path.join(opt.result_path, 'opts.json'), 'w') as opt_file:
     #    json.dump(vars(opt), opt_file)
 
     torch.manual_seed(opt.manual_seed)
-
-    model, parameters = generate_model(opt)
+    model = torchvision.models.video.r3d_18(pretrained=True, progress=True)
+    if not opt.no_cuda:
+        model = model.cuda()
+        model = nn.DataParallel(model, device_ids=None)
+    parameters = model.parameters
+#     model, parameters = generate_model(opt)
     print(model)
     criterion = nn.CrossEntropyLoss()
     if not opt.no_cuda:
         criterion = criterion.cuda()
-
-    #if opt.no_mean_norm and not opt.std_norm:
-    #    norm_method = Normalize([0, 0, 0], [1, 1, 1])
-    #elif not opt.std_norm:
-    #    norm_method = Normalize(opt.mean, [1, 1, 1])
-    #else:
-    #    norm_method = Normalize(opt.mean, opt.std)
-
     if not opt.no_train:
-        """assert opt.train_crop in ['random', 'corner', 'center']
-        if opt.train_crop == 'random':
-            crop_method = MultiScaleRandomCrop(opt.scales, opt.sample_size)
-        elif opt.train_crop == 'corner':
-            crop_method = MultiScaleCornerCrop(opt.scales, opt.sample_size)
-        elif opt.train_crop == 'center':
-            crop_method = MultiScaleCornerCrop(
-                opt.scales, opt.sample_size, crop_positions=['c'])
-        """
-        #spatial_transform = Compose([
-        #    crop_method,
-        #    RandomHorizontalFlip(),
-        #    ToTensor(opt.norm_value), norm_method
-        #])
         crop_method = MultiScaleRandomCenterCrop(opt.sample_size)
         spatial_transforms = {}
         with open(opt.mean_file) as f:
