@@ -198,59 +198,6 @@ class CenterCrop(object):
         pass
 
 
-class CornerCrop(object):
-
-    def __init__(self, size, crop_position=None):
-        self.size = size
-        if crop_position is None:
-            self.randomize = True
-        else:
-            self.randomize = False
-        self.crop_position = crop_position
-        self.crop_positions = ['c', 'tl', 'tr', 'bl', 'br']
-
-    def __call__(self, img):
-        image_width = img.size[0]
-        image_height = img.size[1]
-
-        if self.crop_position == 'c':
-            th, tw = (self.size, self.size)
-            x1 = int(round((image_width - tw) / 2.))
-            y1 = int(round((image_height - th) / 2.))
-            x2 = x1 + tw
-            y2 = y1 + th
-        elif self.crop_position == 'tl':
-            x1 = 0
-            y1 = 0
-            x2 = self.size
-            y2 = self.size
-        elif self.crop_position == 'tr':
-            x1 = image_width - self.size
-            y1 = 0
-            x2 = image_width
-            y2 = self.size
-        elif self.crop_position == 'bl':
-            x1 = 0
-            y1 = image_height - self.size
-            x2 = self.size
-            y2 = image_height
-        elif self.crop_position == 'br':
-            x1 = image_width - self.size
-            y1 = image_height - self.size
-            x2 = image_width
-            y2 = image_height
-
-        img = img.crop((x1, y1, x2, y2))
-
-        return img
-
-    def randomize_parameters(self):
-        if self.randomize:
-            self.crop_position = self.crop_positions[random.randint(
-                0,
-                len(self.crop_positions) - 1)]
-
-
 class RandomHorizontalFlip(object):
     """Horizontally flip the given PIL.Image randomly with a probability of 0.5."""
 
@@ -289,101 +236,94 @@ class MultiScaleRandomCenterCrop(object):
 #        self.offset_x = random.randint(-1*int(self.size/4), int(self.size/4))
 #        self.offset_y = random.randint(-1*int(self.size/4), int(self.size/4))
 
-class MultiScaleCornerCrop(object):
-    """Crop the given PIL.Image to randomly selected size.
-    A crop of size is selected from scales of the original size.
-    A position of cropping is randomly selected from 4 corners and 1 center.
-    This crop is finally resized to given size.
+
+class TargetCompose(object):
+
+    def __init__(self, transforms):
+        self.transforms = transforms
+
+    def __call__(self, target):
+        dst = []
+        for t in self.transforms:
+            dst.append(t(target))
+        return dst
+
+
+class ClassLabel(object):
+
+    def __call__(self, target):
+        return target['label']
+
+
+class VideoID(object):
+
+    def __call__(self, target):
+        return target['video_id']
+
+
+class TemporalCenterCrop(object):
+    """Temporally crop the given frame indices at a center.
+
+    If the number of frames is less than the size,
+    loop the indices as many times as necessary to satisfy the size.
+
     Args:
-        scales: cropping scales of the original size
-        size: size of the smaller edge
-        interpolation: Default: PIL.Image.BILINEAR
+        size (int): Desired output size of the crop.
     """
 
-    def __init__(self,
-                 scales,
-                 size,
-                 interpolation=Image.BILINEAR,
-                 crop_positions=['c', 'tl', 'tr', 'bl', 'br']):
-        self.scales = scales
-        
+    def __init__(self, size):
         self.size = size
-        self.interpolation = interpolation
-        self.count = 0
 
-        self.crop_positions = crop_positions
+    def __call__(self, frame_indices):
+        """
+        Args:
+            frame_indices (list): frame indices to be cropped.
+        Returns:
+            list: Cropped frame indices.
+        """
 
-    def __call__(self, img):
-        min_length = min(img.size[0], img.size[1])
-        crop_size = int(min_length * self.scale)
+        center_index = len(frame_indices) // 2
+        begin_index = max(0, center_index - (self.size // 2))
+        end_index = min(begin_index + self.size, len(frame_indices))
 
-        image_width = img.size[0]
-        image_height = img.size[1]
+        out = frame_indices[begin_index:end_index]
 
-        if self.crop_position == 'c':
-            center_x = image_width // 2
-            center_y = image_height // 2
-            box_half = crop_size // 2
-            x1 = center_x - box_half
-            y1 = center_y - box_half
-            x2 = center_x + box_half
-            y2 = center_y + box_half
-        elif self.crop_position == 'tl':
-            x1 = 0
-            y1 = 0
-            x2 = crop_size
-            y2 = crop_size
-        elif self.crop_position == 'tr':
-            x1 = image_width - crop_size
-            y1 = 0
-            x2 = image_width
-            y2 = crop_size
-        elif self.crop_position == 'bl':
-            x1 = 0
-            y1 = image_height - crop_size
-            x2 = crop_size
-            y2 = image_height
-        elif self.crop_position == 'br':
-            x1 = image_width - crop_size
-            y1 = image_height - crop_size
-            x2 = image_width
-            y2 = image_height
+        for index in out:
+            if len(out) >= self.size:
+                break
+            out.append(index)
 
-        img = img.crop((x1, y1, x2, y2))
+        return out
 
-        return img.resize((self.size, self.size), self.interpolation)
+class TemporalCenterRandomCrop(object):
+    """Temporally crop the given frame indices at a random location.
 
-    def randomize_parameters(self):
-        self.scale = self.scales[random.randint(0, len(self.scales) - 1)]
-        self.crop_position = self.crop_positions[random.randint(
-            0,
-            len(self.crop_positions) - 1)]
+    If the number of frames is less than the size,
+    loop the indices as many times as necessary to satisfy the size.
 
+    Args:
+        size (int): Desired output size of the crop.
+    """
 
-class MultiScaleRandomCrop(object):
-
-    def __init__(self, scales, size, interpolation=Image.BILINEAR):
-        self.scales = scales
+    def __init__(self, size):
         self.size = size
-        self.interpolation = interpolation
 
-    def __call__(self, img):
-        min_length = min(img.size[0], img.size[1])
-        crop_size = int(min_length * self.scale)
+    def __call__(self, frame_indices):
+        """
+        Args:
+            frame_indices (list): frame indices to be cropped.
+        Returns:
+            list: Cropped frame indices.
+        """
+        spacing = int((len(frame_indices) - self.size)/2) # i.e. if 120 and 90: = 30 
+        offset = random.randint(-1*int(spacing/2) + 1, int(spacing/2) - 1) # i.e if 120 and 90, -14 to 14
+        begin_index = int(len(frame_indices)/2) - int(self.size/2) + offset # i.e. 120: 60 - 45 + offset (-1 to 29)
+        end_index = begin_index + self.size
 
-        image_width = img.size[0]
-        image_height = img.size[1]
+        out = frame_indices[begin_index:end_index]
+        for index in out:
+            if len(out) >= self.size:
+                break
+            out.append(index)
+        return out
 
-        x1 = self.tl_x * (image_width - crop_size)
-        y1 = self.tl_y * (image_height - crop_size)
-        x2 = x1 + crop_size
-        y2 = y1 + crop_size
-
-        img = img.crop((x1, y1, x2, y2))
-
-        return img.resize((self.size, self.size), self.interpolation)
-
-    def randomize_parameters(self):
-        self.scale = self.scales[random.randint(0, len(self.scales) - 1)]
-        self.tl_x = random.random()
-        self.tl_y = random.random()
