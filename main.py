@@ -193,7 +193,7 @@ if __name__ == '__main__':
     if not opt.no_cuda:
         model = model.cuda()
         model = nn.DataParallel(model, device_ids=None)
-    parameters = model.parameters
+    parameters = model.parameters()
 #     model, parameters = generate_model(opt)
     print(model)
     criterion = nn.CrossEntropyLoss()
@@ -219,10 +219,6 @@ if __name__ == '__main__':
         annotationDictionary = dict(zip(keys, values))
 
         temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
-        """if opt.temporal_crop == 'Random':
-            temporal_transform = TemporalRandomCrop(opt.sample_duration)
-        else:
-            temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)"""
         target_transform = ClassLabel()
         training_data = get_training_set(opt, spatial_transforms,
                                          temporal_transform, target_transform, annotationDictionary)
