@@ -1,4 +1,4 @@
-import torch
+import torch, sys, pdb
 import torch.utils.data as data
 from PIL import Image
 import os
@@ -87,9 +87,9 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
     idx_to_class = {}
     for name, label in class_to_idx.items():
         idx_to_class[label] = name
-
     dataset = []
     for i in range(len(video_names)):
+        #print(video_names[i])
         if i % 1000 == 0:
             print('dataset loading [{}/{}]'.format(i, len(video_names)))
 
@@ -133,8 +133,45 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
 
     return dataset, idx_to_class
 
+def get_training_set(opt, spatial_transforms, temporal_transform,
+                     target_transform, annotationDict):
+    training_data = cichlids(
+    opt.video_path,
+    opt.annotation_path,
+    'training',
+    spatial_transforms=spatial_transforms,
+    temporal_transform=temporal_transform,
+    target_transform=target_transform, annotationDict = annotationDict)
+    return training_data
 
-class UCF101(data.Dataset):
+def get_validation_set(opt, spatial_transforms, temporal_transform,
+                       target_transform, annotationDict):
+    validation_data = cichlids(
+    opt.video_path,
+    opt.annotation_path,
+    'validation',
+    opt.n_val_samples,
+    spatial_transforms,
+    temporal_transform,
+    target_transform,
+    sample_duration=opt.sample_duration,annotationDict = annotationDict)
+    return validation_data
+
+def get_test_set(opt, spatial_transforms, temporal_transform,
+                       target_transform, annotationDict):
+    test_data = cichlids(
+    opt.video_path,
+    opt.annotation_path,
+    'test',
+    opt.n_val_samples,
+    spatial_transforms,
+    temporal_transform,
+    target_transform,
+    sample_duration=opt.sample_duration,annotationDict = annotationDict)
+    return test_data
+
+
+class cichlids(data.Dataset):
     """
     Args:
         root (string): Root directory path.
@@ -156,19 +193,21 @@ class UCF101(data.Dataset):
                  annotation_path,
                  subset,
                  n_samples_for_each_video=1,
-                 spatial_transform=None,
+                 spatial_transforms=None,
                  temporal_transform=None,
                  target_transform=None,
+                 annotationDict = None,
                  sample_duration=16,
                  get_loader=get_default_video_loader):
         self.data, self.class_names = make_dataset(
             root_path, annotation_path, subset, n_samples_for_each_video,
             sample_duration)
 
-        self.spatial_transform = spatial_transform
+        self.spatial_transforms = spatial_transforms
         self.temporal_transform = temporal_transform
         self.target_transform = target_transform
         self.loader = get_loader()
+        self.annotationDict = annotationDict
 
     def __getitem__(self, index):
         """
@@ -177,22 +216,22 @@ class UCF101(data.Dataset):
         Returns:
             tuple: (image, target) where target is class_index of the target class.
         """
+        
         path = self.data[index]['video']
-
+        clip_name = path.rstrip().split('/')[-1]
         frame_indices = self.data[index]['frame_indices']
         if self.temporal_transform is not None:
             frame_indices = self.temporal_transform(frame_indices)
         clip = self.loader(path, frame_indices)
-        if self.spatial_transform is not None:
-            self.spatial_transform.randomize_parameters()
-            clip = [self.spatial_transform(img) for img in clip]
+        if self.spatial_transforms is not None:
+            self.spatial_transforms[self.annotationDict[clip_name]].randomize_parameters()
+            clip = [self.spatial_transforms[self.annotationDict[clip_name]](img) for img in clip]
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
 
         target = self.data[index]
         if self.target_transform is not None:
             target = self.target_transform(target)
-
-        return clip, target
+        return clip, target, path
 
     def __len__(self):
         return len(self.data)

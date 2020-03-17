@@ -21,7 +21,8 @@ from spatial_transforms import (
 from temporal_transforms import LoopPadding, TemporalRandomCrop, TemporalCenterCrop, TemporalCenterRandomCrop
 from target_transforms import ClassLabel, VideoID
 from target_transforms import Compose as TargetCompose
-from dataset import get_training_set, get_validation_set, get_test_set
+from data_loader import get_training_set, get_validation_set, get_test_set
+
 from utils import Logger,AverageMeter, calculate_accuracy
 
 
@@ -169,6 +170,8 @@ def val_epoch(epoch, data_loader, model, criterion, opt, logger):
     logger.log({'epoch': epoch, 'loss': losses.avg, 'acc': accuracies.avg})
 
     return losses.avg
+
+
 
 if __name__ == '__main__':
     
@@ -318,9 +321,8 @@ if __name__ == '__main__':
     print('run')
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
         if not opt.no_train:
-            pass
-#             train_epoch(i, train_loader, model, criterion, optimizer, opt,
-#                         train_logger, train_batch_logger)
+            train_epoch(i, train_loader, model, criterion, optimizer, opt,
+                        train_logger, train_batch_logger)
         if not opt.no_val:
             validation_loss = val_epoch(i, val_loader, model, criterion, opt,
                                         val_logger)
