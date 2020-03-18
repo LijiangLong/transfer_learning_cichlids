@@ -195,7 +195,7 @@ if __name__ == '__main__':
     model2 = torchvision.models.video.r3d_18(pretrained=False, progress=True, **kwargs)
     print(model1)
     print(model2)
-    break
+    return
     if not opt.no_cuda:
         model = model.cuda()
         model = nn.DataParallel(model, device_ids=None)
