@@ -79,7 +79,7 @@ def parse_opts():
         help='Patience of LR scheduler. See documentation of ReduceLROnPlateau.'
     )
     parser.add_argument(
-        '--batch_size', default=3, type=int, help='Batch Size')
+        '--batch_size', default=2, type=int, help='Batch Size')
     parser.add_argument(
         '--n_epochs',
         default=100,
