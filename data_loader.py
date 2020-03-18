@@ -6,6 +6,7 @@ import math
 import functools
 import json
 import copy
+from skvideo import io as vp
 
 from utils import load_value_file
 
@@ -108,7 +109,8 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
             'video': video_path,
             'segment': [begin_t, end_t],
             'n_frames': n_frames,
-            'video_id': video_names[i].split('/')[1]
+            'video_id': video_names[i].split('/')[1],
+            'data' : vp.vread(video_path)
         }
         if len(annotations) != 0:
             sample['label'] = class_to_idx[annotations[i]['label']]
