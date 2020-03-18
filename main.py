@@ -186,12 +186,16 @@ if __name__ == '__main__':
     #    json.dump(vars(opt), opt_file)
 
     torch.manual_seed(opt.manual_seed)
-    model = resnet18(
+    model1 = resnet18(
                 num_classes=opt.n_classes,
                 shortcut_type=opt.resnet_shortcut,
                 sample_size=opt.sample_size,
                 sample_duration=opt.sample_duration,
                 t_stride=opt.t_stride)
+    model2 = torchvision.models.video.r3d_18(pretrained=False, progress=True, **kwargs)
+    print(model1)
+    print(model2)
+    break
     if not opt.no_cuda:
         model = model.cuda()
         model = nn.DataParallel(model, device_ids=None)
@@ -211,7 +215,6 @@ if __name__ == '__main__':
                 tokens = line.rstrip().split(',')
                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
                 spatial_transforms[tokens[0]] = Compose([crop_method, RandomHorizontalFlip(), ToTensor(opt.norm_value), norm_method])
-        pdb.set_trace()
         annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
         keys = annotateData[annotateData.Dataset=='Train']['Location']
         values = annotateData[annotateData.Dataset=='Train']['MeanID']
