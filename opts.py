@@ -44,24 +44,10 @@ def parse_opts():
         type=str,
         help='Result directory path')
     parser.add_argument(
-        '--dataset',
-        default='cichlids',
-        type=str,
-        help='Used dataset (activitynet | kinetics | ucf101 | hmdb51 | cichlids)')
-    parser.add_argument(
         '--n_classes',
         default=10,
-        type=int,
-        help=
-        'Number of classes (activitynet: 200, kinetics: 400, ucf101: 101, hmdb51: 51)'
+        type=int
     )
-    """parser.add_argument(
-        '--n_finetune_classes',
-        default=400,
-        type=int,
-        help=
-        'Number of classes for fine-tuning. n_classes is set to the number when pretraining.'
-    )"""
     parser.add_argument(
         '--sample_size',
         default=160,
@@ -72,28 +58,6 @@ def parse_opts():
         default=96,
         type=int,
         help='Temporal duration of inputs')
-    """parser.add_argument(
-        '--initial_scale',
-        default=1.0,
-        type=float,
-        help='Initial scale for multiscale cropping')
-    parser.add_argument(
-        '--n_scales',
-        default=5,
-        type=int,
-        help='Number of scales for multiscale cropping')
-    parser.add_argument(
-        '--scale_step',
-        default=0.84089641525,
-        type=float,
-        help='Scale step for multiscale cropping')
-    parser.add_argument(
-        '--train_crop',
-        default='corner',
-        type=str,
-        help=
-        'Spatial cropping method in training. random is uniform. corner is selection from 4 corners and 1 center.  (random | corner | center)'
-    )"""
     parser.add_argument(
         '--learning_rate',
         default=0.1,
@@ -105,22 +69,6 @@ def parse_opts():
         '--dampening', default=0.9, type=float, help='dampening of SGD')
     parser.add_argument(
         '--weight_decay', default=1e-23, type=float, help='Weight Decay')
-    """parser.add_argument(
-        '--mean_dataset',
-        default='activitynet',
-        type=str,
-        help=
-        'dataset for mean values of mean subtraction (activitynet | kinetics |cichlids)')
-    parser.add_argument(
-        '--no_mean_norm',
-        action='store_true',
-        help='If true, inputs are not normalized by mean.')
-    parser.set_defaults(no_mean_norm=False)
-    parser.add_argument(
-        '--std_norm',
-        action='store_true',
-        help='If true, inputs are normalized by standard deviation.')
-    parser.set_defaults(std_norm=False)"""
     parser.add_argument(
         '--nesterov', action='store_true', help='Nesterov momentum')
     parser.set_defaults(nesterov=False)
@@ -184,16 +132,6 @@ def parse_opts():
         default='val',
         type=str,
         help='Used subset in test (val | test)')
-    """parser.add_argument(
-        '--scale_in_test',
-        default=1.0,
-        type=float,
-        help='Spatial scale in test')"""
-    """parser.add_argument(
-        '--crop_position_in_test',
-        default='c',
-        type=str,
-        help='Cropping method (c | tl | tr | bl | br) in test')"""
     parser.add_argument(
         '--no_softmax_in_test',
         action='store_true',
@@ -204,7 +142,7 @@ def parse_opts():
     parser.set_defaults(no_cuda=False)
     parser.add_argument(
         '--n_threads',
-        default=5,
+        default=2,
         type=int,
         help='Number of threads for multi-thread loading')
     parser.add_argument(
@@ -224,11 +162,6 @@ def parse_opts():
         help=
         'If 1, range of inputs is [0-255]. If 255, range of inputs is [0-1].')
     parser.add_argument(
-        '--model',
-        default='resnet',
-        type=str,
-        help='(resnet | preresnet | wideresnet | resnext | densenet | ')
-    parser.add_argument(
         '--model_depth',
         default=18,
         type=int,
@@ -238,13 +171,8 @@ def parse_opts():
         default='B',
         type=str,
         help='Shortcut type of resnet (A | B)')
-    parser.add_argument(
-        '--wide_resnet_k', default=2, type=int, help='Wide resnet k')
-    parser.add_argument(
-        '--resnext_cardinality',
-        default=32,
-        type=int,
-        help='ResNeXt cardinality')
+
+
     parser.add_argument(
         '--manual_seed', default=9481, type=int, help='Manually set random seed')
 
