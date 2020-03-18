@@ -171,8 +171,8 @@ def val_epoch(epoch, data_loader, model, criterion, opt, logger):
 
 
 
-if __name__ == '__main__':
-    
+
+def main():
     opt = parse_opts()
     if opt.root_path != '':
         opt.video_path = os.path.join(opt.root_path, opt.video_path)
@@ -322,3 +322,5 @@ if __name__ == '__main__':
             num_workers=opt.n_threads,
             pin_memory=True)
         test.test(test_loader, model, opt, test_data.class_names)
+if __name__ == '__main__':
+    main()
