@@ -195,6 +195,7 @@ def main():
     model2 = torchvision.models.video.r3d_18(pretrained=False, progress=True)
     model2.fc = nn.Linear(in_features=512, out_features=10, bias=True)
     model = model2
+    pdb.set_trace()
     if not opt.no_cuda:
         model = model.cuda()
         model = nn.DataParallel(model, device_ids=None)
