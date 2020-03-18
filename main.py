@@ -193,8 +193,12 @@ def main():
                 sample_duration=opt.sample_duration,
                 t_stride=opt.t_stride)
     model2 = torchvision.models.video.r3d_18(pretrained=False, progress=True)
+    model2.fc = nn.Linear(in_features=512, out_features=10, bias=True)
+    
     print(model1)
+    print(sum(p.numel() for p in model1.parameters()))
     print(model2)
+    print(sum(p.numel() for p in model2.parameters()))
     return
     if not opt.no_cuda:
         model = model.cuda()
