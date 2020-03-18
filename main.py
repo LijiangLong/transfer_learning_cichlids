@@ -199,6 +199,7 @@ def main():
     print(sum(p.numel() for p in model1.parameters()))
     print(model2)
     print(sum(p.numel() for p in model2.parameters()))
+    pdb.set_trace()
     return
     if not opt.no_cuda:
         model = model.cuda()
