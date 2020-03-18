@@ -192,7 +192,7 @@ def main():
                 sample_size=opt.sample_size,
                 sample_duration=opt.sample_duration,
                 t_stride=opt.t_stride)
-    model2 = torchvision.models.video.r3d_18(pretrained=False, progress=True, **kwargs)
+    model2 = torchvision.models.video.r3d_18(pretrained=False, progress=True)
     print(model1)
     print(model2)
     return
