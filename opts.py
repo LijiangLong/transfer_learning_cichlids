@@ -28,11 +28,6 @@ def parse_opts():
         default=1,
         type=int,
         help='Stride for first convolution. Larger stride decreases memory and accuracy')
-    """parser.add_argument(
-        '--temporal_crop',
-        default='random',
-        type=str,
-        help='(random | center)')"""
     parser.add_argument(
         '--annotation_path',
         default='cichlids_patrick.json',
@@ -84,7 +79,7 @@ def parse_opts():
         help='Patience of LR scheduler. See documentation of ReduceLROnPlateau.'
     )
     parser.add_argument(
-        '--batch_size', default=6, type=int, help='Batch Size')
+        '--batch_size', default=1, type=int, help='Batch Size')
     parser.add_argument(
         '--n_epochs',
         default=100,
