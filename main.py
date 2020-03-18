@@ -293,7 +293,6 @@ def main():
             optimizer.load_state_dict(checkpoint['optimizer'])
 
     print('run')
-    pdb.set_trace()
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
         if not opt.no_train:
             train_epoch(i, train_loader, model, criterion, optimizer, opt,
