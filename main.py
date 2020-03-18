@@ -15,15 +15,12 @@ import time
 
 from opts import parse_opts
 from resnet import resnet18
-from mean import get_mean, get_std
-from spatial_transforms import (
-    Compose, Normalize, Scale, CenterCrop, CornerCrop, MultiScaleCornerCrop,
-    MultiScaleRandomCrop, RandomHorizontalFlip, MultiScaleRandomCenterCrop, ToTensor)
-from temporal_transforms import LoopPadding, TemporalRandomCrop, TemporalCenterCrop, TemporalCenterRandomCrop
-from target_transforms import ClassLabel, VideoID
-from target_transforms import Compose as TargetCompose
+from transforms import (
+    Compose, Normalize, Scale, CenterCrop, 
+    RandomHorizontalFlip, MultiScaleRandomCenterCrop, 
+    ToTensor,TemporalCenterCrop, TemporalCenterRandomCrop,
+    ClassLabel, VideoID,TargetCompose)
 from data_loader import get_training_set, get_validation_set, get_test_set
-
 from utils import Logger,AverageMeter, calculate_accuracy
 
 
