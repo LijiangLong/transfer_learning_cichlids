@@ -161,7 +161,7 @@ class cichlids(data.Dataset):
         """
         pdb.set_trace()
         path = self.data[index]['video']
-        clip_name = path.rstrip().split('/')[-1]
+        clip_name = path.rstrip().split('/')[-1].split('.')[0]
         clip_numpy = vp.vread(path)
         n_frames = clip_numpy.shape[0]
         frame_indices = [x for x in range(n_frames)]
@@ -169,11 +169,11 @@ class cichlids(data.Dataset):
             frame_indices = self.temporal_transform(frame_indices)
         clip = [clip_numpy[i] for i in frame_indices]
         
-        path = self.data[index]['video']
-        
-        frame_indices = self.data[index]['frame_indices']
+#         path = self.data[index]['video']
+#         
+#         frame_indices = self.data[index]['frame_indices']
 
-        clip = self.loader(path, frame_indices)
+#         clip = self.loader(path, frame_indices)
         if self.spatial_transforms is not None:
             self.spatial_transforms[self.annotationDict[clip_name]].randomize_parameters()
             clip = [self.spatial_transforms[self.annotationDict[clip_name]](img) for img in clip]
