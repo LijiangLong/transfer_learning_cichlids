@@ -186,15 +186,8 @@ def main():
     #    json.dump(vars(opt), opt_file)
 
     torch.manual_seed(opt.manual_seed)
-    model1 = resnet18(
-                num_classes=opt.n_classes,
-                shortcut_type=opt.resnet_shortcut,
-                sample_size=opt.sample_size,
-                sample_duration=opt.sample_duration,
-                t_stride=opt.t_stride)
-    model2 = torchvision.models.video.r3d_18(pretrained=False, progress=True)
-    model2.fc = nn.Linear(in_features=512, out_features=10, bias=True)
-    model = model2
+    model = torchvision.models.video.r3d_18(pretrained=False, progress=True)
+    model.fc = nn.Linear(in_features=512, out_features=10, bias=True)
     
     if not opt.no_cuda:
         model = model.cuda()
