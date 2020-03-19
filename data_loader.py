@@ -174,8 +174,10 @@ class cichlids(data.Dataset):
 #         frame_indices = self.data[index]['frame_indices']
 
 #         clip = self.loader(path, frame_indices)
+        
         if self.spatial_transforms is not None:
             self.spatial_transforms[self.annotationDict[clip_name]].randomize_parameters()
+            self.spatial_transforms[self.annotationDict[clip_name]](clip[0])
             clip = [self.spatial_transforms[self.annotationDict[clip_name]](img) for img in clip]
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
 
