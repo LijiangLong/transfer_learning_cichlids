@@ -103,7 +103,7 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
         sample = {
             'video': video_path,
             'video_id': video_names[i].split('/')[1],
-            'data' : video_data
+            'data' : video_data,
             'nframes' : n_frames
         }
         if len(annotations) != 0:
