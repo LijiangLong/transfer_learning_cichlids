@@ -159,7 +159,6 @@ class cichlids(data.Dataset):
         Returns:
             tuple: (image, target) where target is class_index of the target class.
         """
-        pdb.set_trace()
         path = self.data[index]['video']
         clip_name = path.rstrip().split('/')[-1].split('.')[0]
         clip_numpy = vp.vread(path)
@@ -226,19 +225,19 @@ def get_test_set(opt, spatial_transforms, temporal_transform,
     target_transform,
     sample_duration=opt.sample_duration,annotationDict = annotationDict)
     return test_data
-    
-from opts import parse_opts
-import pandas as pd
-from transforms import (
-    Compose, Normalize, Scale, CenterCrop, 
-    RandomHorizontalFlip, MultiScaleRandomCenterCrop, 
-    ToTensor,TemporalCenterCrop, TemporalCenterRandomCrop,
-    ClassLabel, VideoID,TargetCompose)
-opt = parse_opts()
-if opt.root_path != '':
-    opt.video_path = os.path.join(opt.root_path, opt.video_path)
-    opt.annotation_path = os.path.join(opt.root_path, opt.annotation_path)
-    opt.result_path = os.path.join(opt.root_path, opt.result_path)
+#     
+# from opts import parse_opts
+# import pandas as pd
+# from transforms import (
+#     Compose, Normalize, Scale, CenterCrop, 
+#     RandomHorizontalFlip, MultiScaleRandomCenterCrop, 
+#     ToTensor,TemporalCenterCrop, TemporalCenterRandomCrop,
+#     ClassLabel, VideoID,TargetCompose)
+# opt = parse_opts()
+# if opt.root_path != '':
+#     opt.video_path = os.path.join(opt.root_path, opt.video_path)
+#     opt.annotation_path = os.path.join(opt.root_path, opt.annotation_path)
+#     opt.result_path = os.path.join(opt.root_path, opt.result_path)
 
 # opt.arch = 'resnet-{}'.format(opt.model_depth)
 # print(opt)
