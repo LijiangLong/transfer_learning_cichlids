@@ -89,58 +89,29 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
     for name, label in class_to_idx.items():
         idx_to_class[label] = name
     dataset = []
-    pdb.set_trace()
     for i in range(len(video_names)):
         #print(video_names[i])
         if i % 1000 == 0:
             print('dataset loading [{}/{}]'.format(i, len(video_names)))
 
         video_path = os.path.join(root_path, video_names[i]+'.mp4')
-        sample_data = vp.vread(video_path)
-        n_frames = sample_data.size()
         if not os.path.exists(video_path):
-            continue
+            raise(video_path+'not exist')
+        video_data = vp.vread(video_path)
+        n_frames = video_data.shape[0]
 
-#         n_frames_file_path = os.path.join(video_path, 'n_frames')
-#         n_frames = int(load_value_file(n_frames_file_path))
-#         if n_frames <= 0:
-#             continue
-# 
-#         begin_t = 1
-#         end_t = n_frames
-#         sample = {
-#             'video': video_path,
-#             'segment': [begin_t, end_t],
-#             'n_frames': n_frames,
-#             'video_id': video_names[i].split('/')[1],
-#             'data' : vp.vread(video_path)
-#         }
         sample = {
             'video': video_path,
             'video_id': video_names[i].split('/')[1],
-            'data' : sample_data
+            'data' : video_data
+            'nframes' : n_frames
         }
         if len(annotations) != 0:
             sample['label'] = class_to_idx[annotations[i]['label']]
         else:
             sample['label'] = -1
 
-        if n_samples_for_each_video == 1:
-            sample['frame_indices'] = list(range(1, n_frames + 1))
-            dataset.append(sample)
-        else:
-            if n_samples_for_each_video > 1:
-                step = max(1,
-                           math.ceil((n_frames - 1 - sample_duration) /
-                                     (n_samples_for_each_video - 1)))
-            else:
-                step = sample_duration
-            for j in range(1, n_frames, step):
-                sample_j = copy.deepcopy(sample)
-                sample_j['frame_indices'] = list(
-                    range(j, min(n_frames + 1, j + sample_duration)))
-                dataset.append(sample_j)
-
+        dataset.append(sample)
     return dataset, idx_to_class
 
 def get_training_set(opt, spatial_transforms, temporal_transform,
