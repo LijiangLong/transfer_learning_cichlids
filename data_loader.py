@@ -233,6 +233,13 @@ from transforms import (
     ToTensor,TemporalCenterCrop, TemporalCenterRandomCrop,
     ClassLabel, VideoID,TargetCompose)
 opt = parse_opts()
+if opt.root_path != '':
+    opt.video_path = os.path.join(opt.root_path, opt.video_path)
+    opt.annotation_path = os.path.join(opt.root_path, opt.annotation_path)
+    opt.result_path = os.path.join(opt.root_path, opt.result_path)
+
+opt.arch = 'resnet-{}'.format(opt.model_depth)
+print(opt)
 crop_method = MultiScaleRandomCenterCrop(opt.sample_size)
 spatial_transforms = {}
 with open(opt.mean_file) as f:
