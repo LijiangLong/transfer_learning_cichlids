@@ -16,7 +16,7 @@ import time
 from opts import parse_opts
 from resnet import resnet18
 from transforms import (
-    Compose, Normalize, Scale, 
+    Compose, Normalize, Scale, CenterCrop
     RandomHorizontalFlip, MultiScaleRandomCenterCrop, 
     ToTensor,TemporalCenterCrop, TemporalCenterRandomCrop,
     ClassLabel, VideoID,TargetCompose)
