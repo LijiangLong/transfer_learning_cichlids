@@ -225,3 +225,30 @@ def get_test_set(opt, spatial_transforms, temporal_transform,
     sample_duration=opt.sample_duration,annotationDict = annotationDict)
     return test_data
     
+from opts import parse_opts
+from transforms import (
+    Compose, Normalize, Scale, CenterCrop, 
+    RandomHorizontalFlip, MultiScaleRandomCenterCrop, 
+    ToTensor,TemporalCenterCrop, TemporalCenterRandomCrop,
+    ClassLabel, VideoID,TargetCompose)
+opt = parse_opts()
+crop_method = MultiScaleRandomCenterCrop(opt.sample_size)
+spatial_transforms = {}
+with open(opt.mean_file) as f:
+    for i,line in enumerate(f):
+        if i==0:
+            continue
+        tokens = line.rstrip().split(',')
+        norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
+        spatial_transforms[tokens[0]] = Compose([crop_method, RandomHorizontalFlip(), ToTensor(opt.norm_value), norm_method])
+annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
+keys = annotateData[annotateData.Dataset=='Train']['Location']
+values = annotateData[annotateData.Dataset=='Train']['MeanID']
+
+annotationDictionary = dict(zip(keys, values))
+
+temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
+target_transform = ClassLabel()
+training_data = get_training_set(opt, spatial_transforms,
+                                         temporal_transform, target_transform, annotationDictionary)
+training_data.__getitem__(0)
