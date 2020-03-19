@@ -179,8 +179,8 @@ class ResNet(nn.Module):
         x = self.bn1(x)
         x = self.relu(x)
         print(x.size())
-#         x = self.maxpool(x)
-#         print(x.size())
+        x = self.maxpool(x)
+        print(x.size())
 
         x = self.layer1(x)
         print(x.size())

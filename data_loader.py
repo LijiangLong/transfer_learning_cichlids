@@ -167,14 +167,6 @@ class cichlids(data.Dataset):
         frame_indices = [x for x in range(n_frames)]
         if self.temporal_transform is not None:
             frame_indices = self.temporal_transform(frame_indices)
-        #multiscale random center crop
-        
-        #RandomHorizontalFlip()
-        
-        #to_tensor()
-        
-        #normalize()
-        
         clip = [Image.fromarray(clip_numpy[i]) for i in frame_indices]
         
 #         path = self.data[index]['video']
@@ -248,25 +240,25 @@ if opt.root_path != '':
     opt.annotation_path = os.path.join(opt.root_path, opt.annotation_path)
     opt.result_path = os.path.join(opt.root_path, opt.result_path)
 
-opt.arch = 'resnet-{}'.format(opt.model_depth)
-print(opt)
-crop_method = MultiScaleRandomCenterCrop(opt.sample_size)
-spatial_transforms = {}
-with open(opt.mean_file) as f:
-    for i,line in enumerate(f):
-        if i==0:
-            continue
-        tokens = line.rstrip().split(',')
-        norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
-        spatial_transforms[tokens[0]] = Compose([crop_method, RandomHorizontalFlip(), ToTensor(opt.norm_value), norm_method])
-annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
-keys = annotateData[annotateData.Dataset=='Train']['Location']
-values = annotateData[annotateData.Dataset=='Train']['MeanID']
-
-annotationDictionary = dict(zip(keys, values))
-
-temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
-target_transform = ClassLabel()
-training_data = get_training_set(opt, spatial_transforms,
-                                         temporal_transform, target_transform, annotationDictionary)
-training_data.__getitem__(0)
+# opt.arch = 'resnet-{}'.format(opt.model_depth)
+# print(opt)
+# crop_method = MultiScaleRandomCenterCrop(opt.sample_size)
+# spatial_transforms = {}
+# with open(opt.mean_file) as f:
+#     for i,line in enumerate(f):
+#         if i==0:
+#             continue
+#         tokens = line.rstrip().split(',')
+#         norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
+#         spatial_transforms[tokens[0]] = Compose([crop_method, RandomHorizontalFlip(), ToTensor(opt.norm_value), norm_method])
+# annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
+# keys = annotateData[annotateData.Dataset=='Train']['Location']
+# values = annotateData[annotateData.Dataset=='Train']['MeanID']
+# 
+# annotationDictionary = dict(zip(keys, values))
+# 
+# temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
+# target_transform = ClassLabel()
+# training_data = get_training_set(opt, spatial_transforms,
+#                                          temporal_transform, target_transform, annotationDictionary)
+# training_data.__getitem__(0)
