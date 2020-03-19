@@ -94,23 +94,30 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
         if i % 1000 == 0:
             print('dataset loading [{}/{}]'.format(i, len(video_names)))
 
-        video_path = os.path.join(root_path, video_names[i])
+        video_path = os.path.join(root_path, video_names[i]+'.mp4')
+        sample_data = vp.vread(video_path)
+        n_frames = sample_data.size()
         if not os.path.exists(video_path):
             continue
 
-        n_frames_file_path = os.path.join(video_path, 'n_frames')
-        n_frames = int(load_value_file(n_frames_file_path))
-        if n_frames <= 0:
-            continue
-
-        begin_t = 1
-        end_t = n_frames
+#         n_frames_file_path = os.path.join(video_path, 'n_frames')
+#         n_frames = int(load_value_file(n_frames_file_path))
+#         if n_frames <= 0:
+#             continue
+# 
+#         begin_t = 1
+#         end_t = n_frames
+#         sample = {
+#             'video': video_path,
+#             'segment': [begin_t, end_t],
+#             'n_frames': n_frames,
+#             'video_id': video_names[i].split('/')[1],
+#             'data' : vp.vread(video_path)
+#         }
         sample = {
             'video': video_path,
-            'segment': [begin_t, end_t],
-            'n_frames': n_frames,
             'video_id': video_names[i].split('/')[1],
-            'data' : vp.vread(video_path)
+            'data' : sample_data
         }
         if len(annotations) != 0:
             sample['label'] = class_to_idx[annotations[i]['label']]
