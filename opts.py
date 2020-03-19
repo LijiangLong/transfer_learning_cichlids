@@ -5,12 +5,12 @@ def parse_opts():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--root_path',
-        default='/data/home/llong35/data/11_07_2019',
+        default='/data/home/llong35/data/03_18_2020',
         type=str,
         help='Root directory path of data')
     parser.add_argument(
         '--video_path',
-        default='annotate_video_jpg',
+        default='annotated_videos',
         type=str,
         help='Directory path of Videos')
     parser.add_argument(
@@ -35,7 +35,7 @@ def parse_opts():
         help='Annotation file path')
     parser.add_argument(
         '--result_path',
-        default='results_3_17',
+        default='results_3_18',
         type=str,
         help='Result directory path')
     parser.add_argument(
