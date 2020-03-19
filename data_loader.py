@@ -226,6 +226,7 @@ def get_test_set(opt, spatial_transforms, temporal_transform,
     return test_data
     
 from opts import parse_opts
+import pandas as pd
 from transforms import (
     Compose, Normalize, Scale, CenterCrop, 
     RandomHorizontalFlip, MultiScaleRandomCenterCrop, 
