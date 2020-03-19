@@ -97,14 +97,11 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
         video_path = os.path.join(root_path, video_names[i]+'.mp4')
         if not os.path.exists(video_path):
             raise(video_path+'not exist')
-        video_data = vp.vread(video_path)
-        n_frames = video_data.shape[0]
+
 
         sample = {
             'video': video_path,
             'video_id': video_names[i].split('/')[1],
-            'data' : video_data,
-            'nframes' : n_frames
         }
         if len(annotations) != 0:
             sample['label'] = class_to_idx[annotations[i]['label']]
@@ -114,42 +111,7 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
         dataset.append(sample)
     return dataset, idx_to_class
 
-def get_training_set(opt, spatial_transforms, temporal_transform,
-                     target_transform, annotationDict):
-    training_data = cichlids(
-    opt.video_path,
-    opt.annotation_path,
-    'training',
-    spatial_transforms=spatial_transforms,
-    temporal_transform=temporal_transform,
-    target_transform=target_transform, annotationDict = annotationDict)
-    return training_data
 
-def get_validation_set(opt, spatial_transforms, temporal_transform,
-                       target_transform, annotationDict):
-    validation_data = cichlids(
-    opt.video_path,
-    opt.annotation_path,
-    'validation',
-    opt.n_val_samples,
-    spatial_transforms,
-    temporal_transform,
-    target_transform,
-    sample_duration=opt.sample_duration,annotationDict = annotationDict)
-    return validation_data
-
-def get_test_set(opt, spatial_transforms, temporal_transform,
-                       target_transform, annotationDict):
-    test_data = cichlids(
-    opt.video_path,
-    opt.annotation_path,
-    'test',
-    opt.n_val_samples,
-    spatial_transforms,
-    temporal_transform,
-    target_transform,
-    sample_duration=opt.sample_duration,annotationDict = annotationDict)
-    return test_data
 
 
 class cichlids(data.Dataset):
@@ -197,12 +159,20 @@ class cichlids(data.Dataset):
         Returns:
             tuple: (image, target) where target is class_index of the target class.
         """
-        
+        pdb.set_trace()
         path = self.data[index]['video']
         clip_name = path.rstrip().split('/')[-1]
-        frame_indices = self.data[index]['frame_indices']
+        clip_numpy = vp.vread(path)
+        n_frames = clip.shape[0]
+        frame_indices = [x for x in range(n_frames)]
         if self.temporal_transform is not None:
             frame_indices = self.temporal_transform(frame_indices)
+        clip = [clip[i] for i in frame_indices]
+        
+        path = self.data[index]['video']
+        
+        frame_indices = self.data[index]['frame_indices']
+
         clip = self.loader(path, frame_indices)
         if self.spatial_transforms is not None:
             self.spatial_transforms[self.annotationDict[clip_name]].randomize_parameters()
@@ -216,3 +186,42 @@ class cichlids(data.Dataset):
 
     def __len__(self):
         return len(self.data)
+
+
+def get_training_set(opt, spatial_transforms, temporal_transform,
+                     target_transform, annotationDict):
+    training_data = cichlids(
+    opt.video_path,
+    opt.annotation_path,
+    'training',
+    spatial_transforms=spatial_transforms,
+    temporal_transform=temporal_transform,
+    target_transform=target_transform, annotationDict = annotationDict)
+    return training_data
+
+def get_validation_set(opt, spatial_transforms, temporal_transform,
+                       target_transform, annotationDict):
+    validation_data = cichlids(
+    opt.video_path,
+    opt.annotation_path,
+    'validation',
+    opt.n_val_samples,
+    spatial_transforms,
+    temporal_transform,
+    target_transform,
+    sample_duration=opt.sample_duration,annotationDict = annotationDict)
+    return validation_data
+
+def get_test_set(opt, spatial_transforms, temporal_transform,
+                       target_transform, annotationDict):
+    test_data = cichlids(
+    opt.video_path,
+    opt.annotation_path,
+    'test',
+    opt.n_val_samples,
+    spatial_transforms,
+    temporal_transform,
+    target_transform,
+    sample_duration=opt.sample_duration,annotationDict = annotationDict)
+    return test_data
+    
