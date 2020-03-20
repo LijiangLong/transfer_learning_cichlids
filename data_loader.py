@@ -238,7 +238,6 @@ if opt.root_path != '':
     opt.annotation_path = os.path.join(opt.root_path, opt.annotation_path)
     opt.result_path = os.path.join(opt.root_path, opt.result_path)
 
-opt.arch = 'resnet-{}'.format(opt.model_depth)
 print(opt)
 crop_method = FixedScaleRandomCenterCrop(opt.sample_size,2)
 spatial_transforms = {}
