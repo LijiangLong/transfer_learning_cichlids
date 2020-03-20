@@ -82,6 +82,7 @@ def get_video_names_and_annotations(data, subset):
 
 def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
                  sample_duration):
+    
     data = load_annotation_data(annotation_path)
     video_names, annotations = get_video_names_and_annotations(data, subset)
     class_to_idx = get_class_labels(data)
@@ -142,6 +143,7 @@ class cichlids(data.Dataset):
                  annotationDict = None,
                  sample_duration=16,
                  get_loader=get_default_video_loader):
+        pdb.set_trace()
         self.data, self.class_names = make_dataset(
             root_path, annotation_path, subset, n_samples_for_each_video,
             sample_duration)
@@ -223,7 +225,7 @@ def get_test_set(opt, spatial_transforms, temporal_transform,
     target_transform,
     sample_duration=opt.sample_duration,annotationDict = annotationDict)
     return test_data
-#     
+    
 from opts import parse_opts
 import pandas as pd
 from transforms import (
