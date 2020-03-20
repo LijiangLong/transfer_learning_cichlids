@@ -162,7 +162,10 @@ class cichlids(data.Dataset):
         """
         path = self.data[index]['video']
         clip_name = path.rstrip().split('/')[-1].split('.')[0]
-        clip_numpy = vp.vread(path)
+        try:
+            clip_numpy = vp.vread(path)
+        except:
+            Raise(path)
         n_frames = clip_numpy.shape[0]
         frame_indices = [x for x in range(n_frames)]
         if self.temporal_transform is not None:
