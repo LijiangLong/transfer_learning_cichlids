@@ -177,6 +177,7 @@ class cichlids(data.Dataset):
         if self.spatial_transforms is not None:
             self.spatial_transforms[self.annotationDict[clip_name]].randomize_parameters()
             self.spatial_transforms[self.annotationDict[clip_name]](clip[0])
+            pdb.set_trace()
             clip = [self.spatial_transforms[self.annotationDict[clip_name]](img) for img in clip]
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
 
