@@ -177,12 +177,14 @@ def main():
         opt.video_path = os.path.join(opt.root_path, opt.video_path)
         opt.annotation_path = os.path.join(opt.root_path, opt.annotation_path)
         opt.result_path = os.path.join(opt.root_path, opt.result_path)
+        if not os.path.exists(opt.result_path):
+            os.mkdir(opt.result_path)
         if opt.resume_path:
             opt.resume_path = os.path.join(opt.root_path, opt.resume_path)
     opt.arch = 'resnet-{}'.format(opt.model_depth)
     print(opt)
-    #with open(os.path.join(opt.result_path, 'opts.json'), 'w') as opt_file:
-    #    json.dump(vars(opt), opt_file)
+    with open(os.path.join(opt.result_path, 'opts.json'), 'w') as opt_file:
+       json.dump(vars(opt), opt_file)
 
     torch.manual_seed(opt.manual_seed)
     model = torchvision.models.video.r3d_18(pretrained=False, progress=True)
