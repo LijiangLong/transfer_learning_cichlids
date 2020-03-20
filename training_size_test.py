@@ -37,21 +37,21 @@ def split_train_validation_test(result_path,video_path,train_ratio,validation_ra
     test_list_csv = os.path.join(result_path,'test_list.csv')
     dst_json_path = os.path.join('cichlids.json')
     with open(train_list_csv,'w') as train_output, open(val_list_csv,'w') as val_output,open(test_list_csv,'w') as test_output:
-    for folder in os.listdir(video_path):
-        folder_path = os.path.join(video_path,folder)
-        if not os.path.isdir(folder_path):
-                continue
-        for file in os.listdir(folder_path):
-            if not file.endswith('.mp4'):
-                continue
-            output_string = folder+'/'+file.split('.')[0]+'\n'
-            random_number = np.random.uniform()
-            if  random_number < train_ratio:
-                train_output.write(output_string)
-            elif random_number < train_ratio+validation_ratio:
-                val_output.write(output_string)
-            else:
-                test_output.write(output_string)
+        for folder in os.listdir(video_path):
+            folder_path = os.path.join(video_path,folder)
+            if not os.path.isdir(folder_path):
+                    continue
+            for file in os.listdir(folder_path):
+                if not file.endswith('.mp4'):
+                    continue
+                output_string = folder+'/'+file.split('.')[0]+'\n'
+                random_number = np.random.uniform()
+                if  random_number < train_ratio:
+                    train_output.write(output_string)
+                elif random_number < train_ratio+validation_ratio:
+                    val_output.write(output_string)
+                else:
+                    test_output.write(output_string)
     train_database = convert_csv_to_dict(train_list_csv, 'training')
     val_database = convert_csv_to_dict(val_list_csv, 'validation')
     test_database = convert_csv_to_dict(test_list_csv, 'test')
