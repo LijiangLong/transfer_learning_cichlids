@@ -223,7 +223,7 @@ class FixedScaleRandomCenterCrop(object):
         self.spacing = spacing
 
     def __call__(self, img):
-        w, h = img.shape
+        w, h = img.shape[0:2]
         th, tw = self.size, self.size
         assert w > tw and h > th
         random.seed(self.seed_x)
