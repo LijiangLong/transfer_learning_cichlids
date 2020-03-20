@@ -79,7 +79,7 @@ def parse_opts():
         help='Patience of LR scheduler. See documentation of ReduceLROnPlateau.'
     )
     parser.add_argument(
-        '--batch_size', default=10, type=int, help='Batch Size')
+        '--batch_size', default=14, type=int, help='Batch Size')
     parser.add_argument(
         '--n_epochs',
         default=100,
@@ -137,7 +137,7 @@ def parse_opts():
     parser.set_defaults(no_cuda=False)
     parser.add_argument(
         '--n_threads',
-        default=10,
+        default=14,
         type=int,
         help='Number of threads for multi-thread loading')
     parser.add_argument(
