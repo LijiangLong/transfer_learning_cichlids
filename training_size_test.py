@@ -35,7 +35,7 @@ def split_train_validation_test(result_path,video_path,train_ratio,validation_ra
     train_list_csv = os.path.join(result_path,'train_list.csv')
     val_list_csv = os.path.join(result_path,'val_list.csv')
     test_list_csv = os.path.join(result_path,'test_list.csv')
-    dst_json_path = os.path.join('cichlids.json')
+    dst_json_path = os.path.join(result_path,'cichlids.json')
     with open(train_list_csv,'w') as train_output, open(val_list_csv,'w') as val_output,open(test_list_csv,'w') as test_output:
         for folder in os.listdir(video_path):
             folder_path = os.path.join(video_path,folder)
@@ -76,7 +76,7 @@ def prepare_data_directories(excel_file,master_directory,data_folder):
         # create a new directory
         directory = os.path.join(master_directory,'{}-{}-{}'.format(train_ratio,val_ratio,test_ratio))
         call(['mkdir',directory])
-        call(['ln','-s',data_folder,'./'])
+        call(['ln','-s',data_folder,directory+'/'])
         split_train_validation_test(directory,data_folder,train_ratio,val_ratio)
 
 def main():
@@ -84,7 +84,6 @@ def main():
     excel_file = '/data/home/llong35/files_for_3D_resnet/training_percentage.xlsx'
     master_directory = '/data/home/llong35/data/transfer_test'
     data_folder = '/data/home/llong35/data/annotated_videos'
-    pdb.set_trace()
     prepare_data_directories(excel_file,master_directory,data_folder)
 
 if __name__ == '__main__':
