@@ -180,12 +180,29 @@ class RandomHorizontalFlip(object):
             PIL.Image: Randomly flipped image.
         """
         if self.p < 0.5:
-            return img.transpose(Image.FLIP_LEFT_RIGHT)
+            return np.flip(img, axis = 1)
         return img
 
     def randomize_parameters(self):
         self.p = random.random()
-        
+
+class RandomVerticalFlip(object):
+    """Horizontally flip the given PIL.Image randomly with a probability of 0.5."""
+
+    def __call__(self, img):
+        """
+        Args:
+            img (PIL.Image): Image to be flipped.
+        Returns:
+            PIL.Image: Randomly flipped image.
+        """
+        if self.p < 0.5:
+            return np.flip(img, axis = 0)
+        return img
+
+    def randomize_parameters(self):
+        self.p = random.random()
+
 class CenterCrop(object):
     """Crops the given PIL.Image at the center.
     Args:
