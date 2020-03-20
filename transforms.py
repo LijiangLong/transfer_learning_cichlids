@@ -227,9 +227,9 @@ class FixedScaleRandomCenterCrop(object):
         th, tw = self.size, self.size
         assert w > tw and h > th
         random.seed(self.seed_x)
-        offset_x = random.randint(0,w-tw*self.spacing = spacing-1)
+        offset_x = random.randint(0,w-tw*self.spacing-1)
         random.seed(self.seed_y)
-        offset_y = random.randint(0,h-th*self.spacing = spacing-1)
+        offset_y = random.randint(0,h-th*self.spacing-1)
         
         return img[offset_x:offset_x + tw*self.spacing:self.spacing,offset_y:offset_y + ty*self.spacing:self.spacing]
 
