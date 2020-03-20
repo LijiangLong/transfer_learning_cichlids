@@ -231,7 +231,7 @@ from opts import parse_opts
 import pandas as pd
 from transforms import (
     Compose, Normalize, Scale, CenterCrop, 
-    RandomHorizontalFlip, MultiScaleRandomCenterCrop, 
+    RandomHorizontalFlip, FixedScaleRandomCenterCrop, 
     ToTensor,TemporalCenterCrop, TemporalCenterRandomCrop,
     ClassLabel, VideoID,TargetCompose)
 opt = parse_opts()
