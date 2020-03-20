@@ -16,7 +16,7 @@ import time
 from opts import parse_opts
 from transforms import (
     Compose, Normalize, Scale, CenterCrop,
-    RandomHorizontalFlip, FixedScaleRandomCenterCrop, 
+    RandomHorizontalFlip,RandomVerticalFlip, FixedScaleRandomCenterCrop, 
     ToTensor,TemporalCenterCrop, TemporalCenterRandomCrop,
     ClassLabel, VideoID,TargetCompose)
 from data_loader import get_training_set, get_validation_set, get_test_set
@@ -206,7 +206,7 @@ def main():
                     continue
                 tokens = line.rstrip().split(',')
                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
-                spatial_transforms[tokens[0]] = Compose([crop_method, RandomHorizontalFlip(), ToTensor(opt.norm_value), norm_method])
+                spatial_transforms[tokens[0]] = Compose([crop_method, RandomHorizontalFlip(),RandomVerticalFlip(), ToTensor(opt.norm_value), norm_method])
         annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
         keys = annotateData[annotateData.Dataset=='Train']['Location']
         values = annotateData[annotateData.Dataset=='Train']['MeanID']
