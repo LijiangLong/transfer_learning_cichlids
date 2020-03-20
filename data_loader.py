@@ -242,7 +242,7 @@ if opt.root_path != '':
 
 opt.arch = 'resnet-{}'.format(opt.model_depth)
 print(opt)
-crop_method = FixedScaleRandomCenterCrop(opt.sample_size)
+crop_method = FixedScaleRandomCenterCrop(opt.sample_size,2)
 spatial_transforms = {}
 with open(opt.mean_file) as f:
     for i,line in enumerate(f):
