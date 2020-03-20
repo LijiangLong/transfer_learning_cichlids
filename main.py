@@ -251,7 +251,7 @@ def main():
                     continue
                 tokens = line.rstrip().split(',')
                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
-                spatial_transforms[tokens[0]] = Compose([CenterCrop(opt.sample_size),ToTensor(opt.norm_value), norm_method])
+                spatial_transforms[tokens[0]] = Compose([CenterCrop(opt.sample_size,2),ToTensor(opt.norm_value), norm_method])
 
         annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
         keys = annotateData[annotateData.Dataset=='Test']['Location']
@@ -287,8 +287,9 @@ def main():
     print('run')
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
         if not opt.no_train:
-            train_epoch(i, train_loader, model, criterion, optimizer, opt,
-                        train_logger, train_batch_logger)
+            pass
+#             train_epoch(i, train_loader, model, criterion, optimizer, opt,
+#                         train_logger, train_batch_logger)
         if not opt.no_val:
             validation_loss = val_epoch(i, val_loader, model, criterion, opt,
                                         val_logger)

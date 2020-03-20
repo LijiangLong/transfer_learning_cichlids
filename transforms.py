@@ -211,24 +211,20 @@ class CenterCrop(object):
             made.
     """
 
-    def __init__(self, size):
-        if isinstance(size, numbers.Number):
-            self.size = (int(size), int(size))
-        else:
-            self.size = size
+    def __init__(self, size,spacing):
+        self.size = size
+        self.spacing = spacing
 
     def __call__(self, img):
-        """
-        Args:
-            img (PIL.Image): Image to be cropped.
-        Returns:
-            PIL.Image: Cropped image.
-        """
-        w, h = img.size
-        th, tw = self.size
-        x1 = int(round((w - tw) / 2.))
-        y1 = int(round((h - th) / 2.))
-        return img.crop((x1, y1, x1 + tw, y1 + th))
+        w, h = img.shape[0:2]
+        th, tw = self.size, self.size
+        assert w > tw and h > th
+        random.seed(self.seed_x)
+        offset_x = (w-tw*self.spacing-1)//2
+        random.seed(self.seed_y)
+        offset_y = (w-tw*self.spacing-1)//2
+        
+        return img[offset_x:offset_x + tw*self.spacing:self.spacing,offset_y:offset_y + th*self.spacing:self.spacing]
 
     def randomize_parameters(self):
         pass

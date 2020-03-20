@@ -35,7 +35,7 @@ def parse_opts():
         help='Annotation file path')
     parser.add_argument(
         '--result_path',
-        default='results_3_18',
+        default='results_3_19',
         type=str,
         help='Result directory path')
     parser.add_argument(
