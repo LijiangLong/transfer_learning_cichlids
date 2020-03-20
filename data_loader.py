@@ -165,7 +165,7 @@ class cichlids(data.Dataset):
         try:
             clip_numpy = vp.vread(path)
         except:
-            Raise(path)
+            print(path)
         n_frames = clip_numpy.shape[0]
         frame_indices = [x for x in range(n_frames)]
         if self.temporal_transform is not None:
