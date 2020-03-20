@@ -219,9 +219,7 @@ class CenterCrop(object):
         w, h = img.shape[0:2]
         th, tw = self.size, self.size
         assert w > tw and h > th
-        random.seed(self.seed_x)
         offset_x = (w-tw*self.spacing-1)//2
-        random.seed(self.seed_y)
         offset_y = (w-tw*self.spacing-1)//2
         
         return img[offset_x:offset_x + tw*self.spacing:self.spacing,offset_y:offset_y + th*self.spacing:self.spacing]
