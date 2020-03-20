@@ -70,9 +70,9 @@ def prepare_data_directories(excel_file,master_directory,data_folder):
     # for each training, create a new folder for training results watching
     df = pd.read_excel(excel_file)
     for index, row in df.iterrows():
-        train_ratio = float(row['training_precentage'])
-        val_ratio = float(row['training_precentage'])
-        test_ratio = float(row['training_precentage'])
+        train_ratio = row['training_precentage']
+        val_ratio = row['validation_percentage']
+        test_ratio = row['testing_percentage']
         # create a new directory
         directory = os.path.join(master_directory,'{}-{}-{}'.format(train_ratio,val_ratio,test_ratio))
         call(['mkdir',directory])
