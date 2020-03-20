@@ -17,7 +17,7 @@ from opts import parse_opts
 from resnet import resnet18
 from transforms import (
     Compose, Normalize, Scale, CenterCrop,
-    RandomHorizontalFlip, MultiScaleRandomCenterCrop, 
+    RandomHorizontalFlip, FixedScaleRandomCenterCrop, 
     ToTensor,TemporalCenterCrop, TemporalCenterRandomCrop,
     ClassLabel, VideoID,TargetCompose)
 from data_loader import get_training_set, get_validation_set, get_test_set

@@ -217,20 +217,21 @@ class CenterCrop(object):
         pass
 
 
-class MultiScaleRandomCenterCrop(object):
-    def __init__(self, size):
+class FixedScaleRandomCenterCrop(object):
+    def __init__(self, size,spacing):
         self.size = size
+        self.spacing = spacing
 
     def __call__(self, img):
-        w, h = img.size
+        w, h = img.shape
         th, tw = self.size, self.size
         assert w > tw and h > th
         random.seed(self.seed_x)
-        offset_x = random.randint(0,w-tw-1)
+        offset_x = random.randint(0,w-tw*self.spacing = spacing-1)
         random.seed(self.seed_y)
-        offset_y = random.randint(0,h-th-1)
+        offset_y = random.randint(0,h-th*self.spacing = spacing-1)
         
-        return img.crop((offset_x, offset_y, offset_x + tw, offset_y + th))
+        return img[offset_x:offset_x + tw*self.spacing:self.spacing,offset_y:offset_y + ty*self.spacing:self.spacing]
 
     def randomize_parameters(self):
         self.seed_x = random.randint(0,1000)
