@@ -209,8 +209,8 @@ def main():
                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
                 spatial_transforms[tokens[0]] = Compose([crop_method, RandomHorizontalFlip(),RandomVerticalFlip(), ToTensor(opt.norm_value), norm_method])
         annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
-        keys = annotateData[annotateData.Dataset=='Train']['Location']
-        values = annotateData[annotateData.Dataset=='Train']['MeanID']
+        keys = annotateData['Location']
+        values = annotateData['MeanID']
 
         annotationDictionary = dict(zip(keys, values))
 
@@ -254,11 +254,11 @@ def main():
                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
                 spatial_transforms[tokens[0]] = Compose([CenterCrop(opt.sample_size,2),ToTensor(opt.norm_value), norm_method])
 
-        annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
-        keys = annotateData[annotateData.Dataset=='Test']['Location']
-        values = annotateData[annotateData.Dataset=='Test']['MeanID']
-
-        annotationDictionary = dict(zip(keys, values))
+#         annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
+#         keys = annotateData[annotateData.Dataset=='Test']['Location']
+#         values = annotateData[annotateData.Dataset=='Test']['MeanID']
+# 
+#         annotationDictionary = dict(zip(keys, values))
         
 
         temporal_transform = TemporalCenterCrop(opt.sample_duration)
