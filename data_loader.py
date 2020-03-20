@@ -143,7 +143,6 @@ class cichlids(data.Dataset):
                  annotationDict = None,
                  sample_duration=16,
                  get_loader=get_default_video_loader):
-        pdb.set_trace()
         self.data, self.class_names = make_dataset(
             root_path, annotation_path, subset, n_samples_for_each_video,
             sample_duration)
