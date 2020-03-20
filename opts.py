@@ -45,7 +45,7 @@ def parse_opts():
     )
     parser.add_argument(
         '--sample_size',
-        default=160,
+        default=60,
         type=int,
         help='Height and width of inputs')
     parser.add_argument(
