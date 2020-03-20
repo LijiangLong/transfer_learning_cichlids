@@ -181,7 +181,6 @@ def main():
             os.mkdir(opt.result_path)
         if opt.resume_path:
             opt.resume_path = os.path.join(opt.root_path, opt.resume_path)
-    opt.arch = 'resnet-{}'.format(opt.model_depth)
     print(opt)
     with open(os.path.join(opt.result_path, 'opts.json'), 'w') as opt_file:
        json.dump(vars(opt), opt_file)
