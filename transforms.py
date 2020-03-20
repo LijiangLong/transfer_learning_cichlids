@@ -231,7 +231,7 @@ class FixedScaleRandomCenterCrop(object):
         random.seed(self.seed_y)
         offset_y = random.randint(0,h-th*self.spacing-1)
         
-        return img[offset_x:offset_x + tw*self.spacing:self.spacing,offset_y:offset_y + ty*self.spacing:self.spacing]
+        return img[offset_x:offset_x + tw*self.spacing:self.spacing,offset_y:offset_y + th*self.spacing:self.spacing]
 
     def randomize_parameters(self):
         self.seed_x = random.randint(0,1000)
