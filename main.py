@@ -287,9 +287,8 @@ def main():
     print('run')
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
         if not opt.no_train:
-            pass
-#             train_epoch(i, train_loader, model, criterion, optimizer, opt,
-#                         train_logger, train_batch_logger)
+            train_epoch(i, train_loader, model, criterion, optimizer, opt,
+                        train_logger, train_batch_logger)
         if not opt.no_val:
             validation_loss = val_epoch(i, val_loader, model, criterion, opt,
                                         val_logger)
