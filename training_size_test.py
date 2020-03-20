@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import sys
 from subprocess import call
+import json
 import pdb
 
 def convert_csv_to_dict(csv_path, subset):
