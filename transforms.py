@@ -55,7 +55,7 @@ class ToTensor(object):
         """
         if isinstance(pic, np.ndarray):
             # handle numpy array
-            img = torch.from_numpy(pic.transpose((2, 0, 1)))
+            img = torch.from_numpy(pic.copy().transpose((2, 0, 1)))
             # backward compatibility
             return img.float().div(self.norm_value)
 
