@@ -11,7 +11,7 @@ from training_size_test import convert_csv_to_dict
 def create_random_spliting_train_test(annotation_file,master_dir,data_folder,n_training=3,split_ratio = 0.8):
     animals_list = ['MC16_2', 'MC6_5', 'MCxCVF1_12a_1', 'MCxCVF1_12b_1', 'TI2_4', 'TI3_3', 'CV10_3']
     training = np.random.choice(animals_list, n_training, replace=False)
-    result_dir = os.path.join(master_dir,'_'.join(training))
+    result_dir = os.path.join(master_dir,','.join(training))
     if os.path.isdir(result_dir):
         return
     else:
