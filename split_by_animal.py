@@ -61,7 +61,7 @@ def prepare_animal_subset_directories(excel_file,master_directory,data_folder):
         split_train_validation_test(directory,data_folder,train_ratio,val_ratio)
         
 def main():
-    annotation_file = '/Users/lijiang/Desktop/AnnotationFile.csv'
+    annotation_file = '/data/home/llong35/patrick_code_test/modelAll_34/AnnotationFile.csv'
     master_dir = '/data/home/llong35/data/transfer_test/animal_split'
     data_folder = '/data/home/llong35/data/annotated_videos'
     create_random_spliting_train_test(annotation_file,master_dir,data_folder,5,split_ratio = 0.8)
