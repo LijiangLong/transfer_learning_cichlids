@@ -94,6 +94,12 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
     if epoch % opt.checkpoint == 0:
         save_file_path = os.path.join(opt.result_path,
                                       'save_{}.pth'.format(epoch))
+        states = {
+            'epoch': epoch + 1,
+            'state_dict': model.state_dict(),
+            'optimizer': optimizer.state_dict(),
+        }
+        torch.save(states, save_file_path)
 
 def val_epoch(epoch, data_loader, model, criterion, opt, logger):
     print('validation at epoch {}'.format(epoch))

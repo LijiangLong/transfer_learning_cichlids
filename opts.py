@@ -138,12 +138,12 @@ def parse_opts():
     parser.set_defaults(no_cuda=False)
     parser.add_argument(
         '--n_threads',
-        default=14,
+        default=3,
         type=int,
         help='Number of threads for multi-thread loading')
     parser.add_argument(
         '--checkpoint',
-        default=10,
+        default=20,
         type=int,
         help='Trained model is saved at every this epochs.')
     parser.add_argument(
