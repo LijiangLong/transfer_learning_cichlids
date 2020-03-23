@@ -5,7 +5,7 @@ import os
 def interpret_log(log_file):
     with open(log_file,'r') as input:
         input.readline()
-        epoches = []
+        epochs = []
         accs = []
         for line in input:
             epoch,loss,acc = line.split()[:3]
