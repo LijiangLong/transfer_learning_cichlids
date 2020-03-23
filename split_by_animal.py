@@ -8,7 +8,7 @@ import pdb
 
 from training_size_test import convert_csv_to_dict
 
-def create_random_spliting_train_test(annotation_file,master_dir,data_folder,n_training=3,split_ratio = 0.8):
+def create_random_spliting_train_test(annotation_file,master_dir,data_folder,n_training=3,split_ratio = 0.8,training_sample_size = 6000):
     animals_list = ['MC16_2', 'MC6_5', 'MCxCVF1_12a_1', 'MCxCVF1_12b_1', 'TI2_4', 'TI3_3', 'CV10_3']
     training = np.random.choice(animals_list, n_training, replace=False)
     result_dir = os.path.join(master_dir,','.join(training))
@@ -26,7 +26,8 @@ def create_random_spliting_train_test(annotation_file,master_dir,data_folder,n_t
     annotateData = pd.read_csv(annotation_file, sep = ',', header = 0)
 
     i = 0
-    with open(train_list_csv,'w') as train_output, open(val_list_csv,'w') as val_output,open(test_list_csv,'w') as test_output:
+    train_list = []
+    with open(val_list_csv,'w') as val_output,open(test_list_csv,'w') as test_output:
         for index,row in annotateData.iterrows():
             output_string = row['Label']+'/'+row['Location']+'\n'
             animal = row['MeanID'].split(':')[0]
@@ -36,9 +37,20 @@ def create_random_spliting_train_test(annotation_file,master_dir,data_folder,n_t
                 continue
             #if train/validation, determine if this go to train or validation
             if np.random.uniform() < split_ratio:
-                train_output.write(output_string)
+                train_list.append(output_string)
+                
             else:
                 val_output.write(output_string)
+                
+    with open(train_list_csv,'w') as train_output:
+        if training_sample_size > len(train_list):
+            print('not enough training data to sample')
+            raise
+        if training_sample_size != -1:
+            train_list = np.random.choice(train_list, training_sample_size, replace=False)
+            for output_string in train_list:
+                train_output.write(output_string)
+    
     train_database = convert_csv_to_dict(train_list_csv, 'training')
     val_database = convert_csv_to_dict(val_list_csv, 'validation')
     test_database = convert_csv_to_dict(test_list_csv, 'test')
@@ -64,7 +76,6 @@ def main():
     annotation_file = '/data/home/llong35/patrick_code_test/modelAll_34/AnnotationFile.csv'
     master_dir = '/data/home/llong35/data/transfer_test/animal_split'
     data_folder = '/data/home/llong35/data/annotated_videos'
-    for n_training in range(1,7):
-        create_random_spliting_train_test(annotation_file,master_dir,data_folder,n_training,split_ratio = 0.8)
+    create_random_spliting_train_test(annotation_file,master_dir,data_folder,n_training,split_ratio = 0.8,training_sample_size = 6000)
 if __name__ == '__main__':
     main()
