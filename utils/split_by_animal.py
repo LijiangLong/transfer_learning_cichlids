@@ -101,6 +101,6 @@ def main():
     annotation_file = '/data/home/llong35/patrick_code_test/modelAll_34/AnnotationFile.csv'
     master_dir = '/data/home/llong35/data/transfer_test/animal_split'
     data_folder = '/data/home/llong35/data/annotated_videos'
-    create_random_spliting_train_test(annotation_file,master_dir,data_folder,5,split_ratio = 0.8)
+    create_random_spliting_train_test(annotation_file,master_dir,data_folder,6,split_ratio = 0.8)
 if __name__ == '__main__':
     main()
