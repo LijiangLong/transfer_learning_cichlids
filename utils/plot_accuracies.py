@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 
+import pdb
 
 def interpret_log(log_file):
     with open(log_file,'r') as input:
@@ -30,6 +31,7 @@ def plot_accuracies(results_folder):
     plt.plot(val_epochs,val_acc,label='validation accuracy')
     plt.plot(test_epochs,test_acc,label='test accuracy')
     plt.legend()
+    pdb.set_trace()
     plt.xticks(np.arange(0, max(train_epochs)+1, 5))
     plt.yticks(np.arange(0, 1, 0.1))
     plt.savefig(output_file)
