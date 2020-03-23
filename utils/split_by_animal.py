@@ -8,7 +8,14 @@ import pdb
 
 from training_size_test import convert_csv_to_dict
 
-def create_random_spliting_train_test(annotation_file,master_dir,data_folder,n_training=3,split_ratio = 0.8,training_sample_size = 6000):
+def create_random_spliting_train_test(annotation_file,
+                                        master_dir,
+                                        data_folder,
+                                        n_training=3,
+                                        split_ratio = 0.8,
+                                        training_sample_size = 6000,
+                                        val_sample_size = 1000,
+                                        test_sample_size = 1000):
     animals_list = ['MC16_2', 'MC6_5', 'MCxCVF1_12a_1', 'MCxCVF1_12b_1', 'TI2_4', 'TI3_3', 'CV10_3']
     training = np.random.choice(animals_list, n_training, replace=False)
     result_dir = os.path.join(master_dir,','.join(training))
@@ -27,20 +34,22 @@ def create_random_spliting_train_test(annotation_file,master_dir,data_folder,n_t
 
     i = 0
     train_list = []
-    with open(val_list_csv,'w') as val_output,open(test_list_csv,'w') as test_output:
-        for index,row in annotateData.iterrows():
-            output_string = row['Label']+'/'+row['Location']+'\n'
-            animal = row['MeanID'].split(':')[0]
-            #first determine if this is train/validation or test
-            if animal not in training:
-                test_output.write(output_string)
-                continue
-            #if train/validation, determine if this go to train or validation
-            if np.random.uniform() < split_ratio:
-                train_list.append(output_string)
+    val_list = []
+    test_list = []
+    
+    for index,row in annotateData.iterrows():
+        output_string = row['Label']+'/'+row['Location']+'\n'
+        animal = row['MeanID'].split(':')[0]
+        #first determine if this is train/validation or test
+        if animal not in training:
+            test_list.append(output_string)
+            continue
+        #if train/validation, determine if this go to train or validation
+        if np.random.uniform() < split_ratio:
+            train_list.append(output_string)
                 
-            else:
-                val_output.write(output_string)
+        else:
+            val_list.append(output_string)
                 
     with open(train_list_csv,'w') as train_output:
         if training_sample_size > len(train_list):
@@ -50,6 +59,22 @@ def create_random_spliting_train_test(annotation_file,master_dir,data_folder,n_t
             train_list = np.random.choice(train_list, training_sample_size, replace=False)
             for output_string in train_list:
                 train_output.write(output_string)
+    with open(val_list_csv,'w') as val_output:
+        if val_sample_size > len(val_list):
+            print('not enough validation data to sample')
+            raise
+        if val_sample_size != -1:
+            val_list = np.random.choice(val_list, val_sample_size, replace=False)
+            for output_string in val_list:
+                val_output.write(output_string)
+    with open(test_list_csv,'w') as test_output:
+        if test_sample_size > len(test_list):
+            print('not enough validation data to sample')
+            raise
+        if test_sample_size != -1:
+            test_list = np.random.choice(test_list, test_sample_size, replace=False)
+            for output_string in test_list:
+                test_output.write(output_string)
     
     train_database = convert_csv_to_dict(train_list_csv, 'training')
     val_database = convert_csv_to_dict(val_list_csv, 'validation')
@@ -76,6 +101,6 @@ def main():
     annotation_file = '/data/home/llong35/patrick_code_test/modelAll_34/AnnotationFile.csv'
     master_dir = '/data/home/llong35/data/transfer_test/animal_split'
     data_folder = '/data/home/llong35/data/annotated_videos'
-    create_random_spliting_train_test(annotation_file,master_dir,data_folder,4,split_ratio = 0.8,training_sample_size = 6000)
+    create_random_spliting_train_test(annotation_file,master_dir,data_folder,4,split_ratio = 0.8)
 if __name__ == '__main__':
     main()
