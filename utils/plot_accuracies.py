@@ -9,6 +9,7 @@ def interpret_log(log_file):
         accs = []
         for line in input:
             epoch,loss,acc = line.split()[:3]
+            acc = float(acc)
             epochs.append(epoch)
             accs.append(acc)
     return epochs,accs
@@ -28,6 +29,7 @@ def plot_accuracies(results_folder):
     plt.plot(val_epochs,val_acc,label='validation accuracy')
     plt.plot(test_epochs,test_acc,label='test accuracy')
     plt.legend()
+    plt.xticks(np.arange(0, max(train_epochs)+1, 5))
     plt.savefig(output_file)
     
     
