@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import os
+import numpy as np
 
 
 def interpret_log(log_file):
@@ -30,6 +31,7 @@ def plot_accuracies(results_folder):
     plt.plot(test_epochs,test_acc,label='test accuracy')
     plt.legend()
     plt.xticks(np.arange(0, max(train_epochs)+1, 5))
+    plt.yticks(np.arange(0, 1, 0.1))
     plt.savefig(output_file)
     
     
