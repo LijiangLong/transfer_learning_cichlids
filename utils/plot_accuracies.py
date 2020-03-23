@@ -39,7 +39,7 @@ def plot_accuracies(results_folder):
     
     
 def main():
-    results_folder = '/data/home/llong35/data/transfer_test/animal_split/MCxCVF1_12b_1,MC6_5,TI3_3,CV10_3,MCxCVF1_12a_1/results'
+    results_folder = '/data/home/llong35/data/transfer_test/animal_split/TI2_4,MCxCVF1_12a_1,MC6_5,CV10_3,MC16_2/results'
     plot_accuracies(results_folder)
 
 if __name__ == '__main__':
