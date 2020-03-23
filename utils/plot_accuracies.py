@@ -1,0 +1,39 @@
+import matplotlib.pyplot as plt
+import os
+
+
+def interpret_log(log_file):
+    with open(log_file,'r') as input:
+        input.readline()
+        epoches = []
+        accs = []
+        for line in input:
+            epoch,loss,acc = line.split()[:3]
+            epochs.append(epoch)
+            accs.append(acc)
+    return epochs,accs
+
+def plot_accuracies(results_folder):
+    training_file = os.path.join(results_folder,'train.log')
+    val_file = os.path.join(results_folder,'val.log')
+    test_file = os.path.join(results_folder,'test.log')
+    output_file = os.path.join(results_folder,'accuracy_plot.png')
+    
+    train_epochs,training_acc = interpret_log(training_file)
+    val_epochs,val_acc = interpret_log(val_file)
+    test_epochs,test_acc = interpret_log(test_file)
+    
+    fig = plt.figure()
+    plt.plot(train_epochs,training_acc,label='training accuracy')
+    plt.plot(val_epochs,val_acc,label='validation accuracy')
+    plt.plot(test_epochs,test_acc,label='test accuracy')
+    plt.legend()
+    plt.savefig(output_file)
+    
+    
+def main():
+    results_folder = '/data/home/llong35/data/transfer_test/animal_split/TI3_3/results'
+    plot_accuracies(results_folder)
+
+if __name__ == '__main__':
+    main()
