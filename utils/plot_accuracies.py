@@ -11,6 +11,7 @@ def interpret_log(log_file):
         accs = []
         for line in input:
             epoch,loss,acc = line.split()[:3]
+            epoch = int(epoch)
             acc = float(acc)
             epochs.append(epoch)
             accs.append(acc)
@@ -31,8 +32,8 @@ def plot_accuracies(results_folder):
     plt.plot(val_epochs,val_acc,label='validation accuracy')
     plt.plot(test_epochs,test_acc,label='test accuracy')
     plt.legend()
-    pdb.set_trace()
-    plt.xticks(np.arange(0, max(train_epochs)+1, 5))
+#     pdb.set_trace()
+    plt.xticks(np.arange(0, train_epochs[-1]+1, 5))
     plt.yticks(np.arange(0, 1, 0.1))
     plt.savefig(output_file)
     
