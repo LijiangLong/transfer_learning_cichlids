@@ -17,7 +17,7 @@ def create_random_spliting_train_test(annotation_file,
                                         val_sample_size = 1000,
                                         test_sample_size = 1000):
     animals_list = ['MC16_2', 'MC6_5', 'MCxCVF1_12a_1', 'MCxCVF1_12b_1', 'TI2_4', 'TI3_3', 'CV10_3']
-    training = np.random.choice(animals_list, n_training, replace=False)
+    training = np.sort(np.random.choice(animals_list, n_training, replace=False))
     result_dir = os.path.join(master_dir,','.join(training))
     if os.path.isdir(result_dir):
         return

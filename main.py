@@ -297,24 +297,18 @@ def main():
         scheduler = lr_scheduler.ReduceLROnPlateau(
             optimizer, 'min', patience=opt.lr_patience)
     if not opt.no_val:
-#         spatial_transforms = {}
-#         with open(opt.mean_file) as f:
-#             for i,line in enumerate(f):
-#                 if i==0:
-#                     continue
-#                 tokens = line.rstrip().split(',')
-#                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
-#                 spatial_transforms[tokens[0]] = Compose([CenterCrop(opt.sample_size,2),ToTensor(opt.norm_value), norm_method])
+        spatial_transforms = {}
+        with open(opt.mean_file) as f:
+            for i,line in enumerate(f):
+                if i==0:
+                    continue
+                tokens = line.rstrip().split(',')
+                norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
+                spatial_transforms[tokens[0]] = Compose([CenterCrop(opt.sample_size,2),ToTensor(opt.norm_value), norm_method])
 
-#         annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
-#         keys = annotateData[annotateData.Dataset=='Test']['Location']
-#         values = annotateData[annotateData.Dataset=='Test']['MeanID']
-# 
-#         annotationDictionary = dict(zip(keys, values))
         
 
-#         temporal_transform = TemporalCenterCrop(opt.sample_duration)
-        #temporal_transform = LoopPadding(opt.sample_duration)
+        temporal_transform = TemporalCenterCrop(opt.sample_duration)
         target_transform = ClassLabel()
         validation_data = get_validation_set(
             opt, spatial_transforms, temporal_transform, target_transform, annotationDictionary)
@@ -328,15 +322,7 @@ def main():
             os.path.join(opt.result_path, 'val.log'), ['epoch', 'loss', 'acc'])
 
     if not opt.no_test:
-
-#         annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
-#         keys = annotateData[annotateData.Dataset=='Test']['Location']
-#         values = annotateData[annotateData.Dataset=='Test']['MeanID']
-# 
-#         annotationDictionary = dict(zip(keys, values))
-        
-
-#         temporal_transform = TemporalCenterCrop(opt.sample_duration)
+        temporal_transform = TemporalCenterCrop(opt.sample_duration)
         target_transform = ClassLabel()
         test_data = get_test_set(
             opt, spatial_transforms, temporal_transform, target_transform, annotationDictionary)
