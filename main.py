@@ -324,10 +324,12 @@ def main():
             pin_memory=True)
         train_logger = Logger(
             os.path.join(opt.result_path, 'train.log'),
-            ['epoch', 'loss', 'acc', 'lr'])
+            ['epoch', 'loss', 'train_label_acc','train_domain_acc','test_label_acc','test_domain_acc', 'lr'])
         train_batch_logger = Logger(
             os.path.join(opt.result_path, 'train_batch.log'),
-            ['epoch', 'batch', 'iter', 'loss', 'acc', 'lr', 'means'])
+            ['epoch', 'batch', 'iter', 'loss', 'train_label_acc','train_domain_acc','test_label_acc','test_domain_acc','lr'])
+
+
 
         if opt.nesterov:
             dampening = 0
