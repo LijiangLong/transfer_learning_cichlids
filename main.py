@@ -78,7 +78,7 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
             test_domain_acc = calculate_accuracy(test_output_domain,test_domain_label)
         
         loss = train_label_loss+train_domain_loss+test_domain_loss
-        losses.update(loss.item(), inputs.size(0))
+        losses.update(loss.item(), batch_size)
         
         train_label_accuracies.update(train_label_acc, batch_size)
         train_domain_accuracies.update(train_domain_acc, batch_size)
@@ -101,21 +101,22 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
             'train_domain_acc': train_domain_accuracies.val,
             'test_label_acc': test_label_accuracies.val,
             'test_domain_acc': test_domain_accuracies.val,
-            'lr': optimizer.param_groups[0]['lr'],
-        })
+            'lr': optimizer.param_groups[0]['lr']})
 
         print('Epoch: [{0}][{1}/{2}]\t'
               'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
               'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
               'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-              'Acc {acc.val:.3f} ({acc.avg:.3f})'.format(
+              'train_label_Acc {train_acc.val:.3f} ({train_acc.avg:.3f})\t
+              'test_label_Acc {test_acc.val:.3f} ({test_acc.avg:.3f})'.format(
                   epoch,
                   i + 1,
                   len(train_loader),
                   batch_time=batch_time,
                   data_time=data_time,
                   loss=losses,
-                  acc=accuracies))
+                  train_acc=train_label_accuracies,
+                  test_acc=test_label_accuracies))
     epoch_logger.log({
         'epoch': epoch,
         'loss': losses.avg,
@@ -163,7 +164,7 @@ def val_epoch(epoch, data_loader, model, criterion, opt, logger):
             
             inputs = Variable(inputs)
             targets = Variable(targets)
-            outputs = model(inputs)
+            outputs,_ = model(inputs,alpha=1)
             loss = criterion(outputs, targets)
             acc = calculate_accuracy(outputs, targets)
             #########  temp line, needs to be removed##################################
