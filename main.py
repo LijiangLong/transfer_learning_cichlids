@@ -399,8 +399,8 @@ def main():
 
         if not opt.no_train and not opt.no_val:
             scheduler.step(validation_loss)
-        if not opt.no_test:
-            test_epoch(i, test_loader, model, criterion, opt,
-                                        test_logger)
+#         if not opt.no_test:
+#             test_epoch(i, test_loader, model, criterion, opt,
+#                                         test_logger)
 if __name__ == '__main__':
     main()
