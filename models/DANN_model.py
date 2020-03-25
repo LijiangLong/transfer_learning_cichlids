@@ -192,7 +192,7 @@ class DANN_model(nn.Module):
         class_output = self.fc(x)
         reverse_feature = ReverseLayerF.apply(x, alpha)
         domain_output = self.domain_classifier(reverse_feature)
-        return class_output, domain_ouptut
+        return class_output, domain_output
 def DANN_resnet18(**kwargs):
     """Constructs a ResNet-18 model.
     """
