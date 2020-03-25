@@ -66,6 +66,8 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
         train_domain_acc = calculate_accuracy(train_output_domain,train_domain_targets)
         if i < len_test:
             test_inputs,test_targets,test_paths = test_iter.next()
+            if not opt.no_cuda:
+                test_targets = test_targets.cuda(async=True)
             test_inputs = Variable(test_inputs)
             test_targets = Variable(test_targets)
             test_output_label,test_output_domain = model(test_inputs, alpha=alpha)
