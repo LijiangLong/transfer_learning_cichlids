@@ -61,7 +61,7 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
         train_output_label,train_output_domain = model(inputs, alpha=alpha)
         train_label_loss = criterion(train_output_label, targets)
         train_label_acc = calculate_accuracy(train_output_label, targets)
-        train_domain_targets = torch.zeros(batch_size)
+        train_domain_targets = torch.zeros(batch_size).cuda()
         train_domain_loss = domain_criterion(train_output_domain,train_domain_targets)
         train_domain_acc = calculate_accuracy(train_output_domain,train_domain_targets)
         if i < len_test:
@@ -70,7 +70,7 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
             test_output_label,test_output_domain = model(test_inputs, alpha=alpha)
             test_label_loss = criterion(test_output_label, test_targets)
             test_label_acc = calculate_accuracy(test_output_label, test_targets)
-            test_domain_label = torch.ones(batch_size)
+            test_domain_label = torch.ones(batch_size).cuda()
             test_domain_loss = domain_criterion(test_output_domain,test_domain_label)
             test_domain_acc = calculate_accuracy(test_output_domain,test_domain_label)
         
