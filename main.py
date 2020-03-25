@@ -67,6 +67,7 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
         if i < len_test:
             test_inputs,test_targets,test_paths = test_iter.next()
             test_inputs = Variable(test_inputs)
+            test_targets = Variable(test_targets)
             test_output_label,test_output_domain = model(test_inputs, alpha=alpha)
             test_label_loss = criterion(test_output_label, test_targets)
             test_label_acc = calculate_accuracy(test_output_label, test_targets)
