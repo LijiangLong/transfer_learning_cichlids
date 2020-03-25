@@ -271,7 +271,7 @@ def main():
        json.dump(vars(opt), opt_file)
 
     torch.manual_seed(opt.manual_seed)
-    model = DANNmodel.DANN_resnet18(
+    model = DANN_model.DANN_resnet18(
                 num_classes=opt.n_classes,
                 shortcut_type=opt.resnet_shortcut,
                 sample_size=opt.sample_size,
