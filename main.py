@@ -65,7 +65,7 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
         train_domain_loss = domain_criterion(train_output_domain,train_domain_targets)
         train_domain_acc = calculate_accuracy(train_output_domain,train_domain_targets)
         if i < len_test:
-            test_inputs,test_target,test_paths = test_iter.next()
+            test_inputs,test_targets,test_paths = test_iter.next()
             test_inputs = Variable(test_inputs)
             test_output_label,test_output_domain = model(test_inputs, alpha=alpha)
             test_label_loss = criterion(test_output_label, test_targets)
@@ -76,7 +76,6 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
         
         loss = train_label_loss+train_domain_loss+test_domain_loss
         losses.update(loss.item(), inputs.size(0))
-        accuracies.update(acc, inputs.size(0))
         
         train_label_accuracies.update(train_label_acc, batch_size)
         train_domain_accuracies.update(train_domain_acc, batch_size)
