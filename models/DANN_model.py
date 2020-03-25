@@ -106,7 +106,7 @@ class DANN_model(nn.Module):
                  shortcut_type='B',
                  num_classes=400):
         self.inplanes = 64
-        super(ResNet, self).__init__()
+        super(DANN_model, self).__init__()
         self.conv1 = nn.Conv3d(
             3,
             64,
