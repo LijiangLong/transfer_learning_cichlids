@@ -49,6 +49,11 @@ def parse_opts():
         default=60,
         type=int,
         help='Height and width of inputs')
+        parser.add_argument(
+        '--sample_spacing',
+        default=2,
+        type=int,
+        help='spacing between spatial samplings')
     parser.add_argument(
         '--sample_duration',
         default=96,
@@ -122,7 +127,7 @@ def parse_opts():
     parser.set_defaults(no_val=False)
     parser.add_argument(
         '--no_test', action='store_true', help='If true, test is performed.')
-    parser.set_defaults(no_test=False)
+    parser.set_defaults(no_test=True)
     parser.add_argument(
         '--test_subset',
         default='test',
@@ -162,11 +167,11 @@ def parse_opts():
 #         default=18,
 #         type=int,
 #         help='Depth of resnet (10 | 18 | 34 | 50 | 101)')
-#     parser.add_argument(
-#         '--resnet_shortcut',
-#         default='B',
-#         type=str,
-#         help='Shortcut type of resnet (A | B)')
+    parser.add_argument(
+        '--resnet_shortcut',
+        default='B',
+        type=str,
+        help='Shortcut type of resnet (A | B)')
 
 
     parser.add_argument(

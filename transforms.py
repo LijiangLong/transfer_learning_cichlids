@@ -211,7 +211,7 @@ class CenterCrop(object):
             made.
     """
 
-    def __init__(self, size,spacing):
+    def __init__(self, size,spacing=1):
         self.size = size
         self.spacing = spacing
 

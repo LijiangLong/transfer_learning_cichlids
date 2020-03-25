@@ -12,7 +12,7 @@ import pdb
 import pandas as pd
 import time
 
-
+from models import DANNmodel
 from opts import parse_opts
 from transforms import (
     Compose, Normalize, Scale, CenterCrop,
@@ -24,36 +24,64 @@ from utils import Logger,AverageMeter, calculate_accuracy
 
 
 
-
-
-def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
+def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criterion,optimizer, opt,
                 epoch_logger, batch_logger):
     print('train at epoch {}'.format(epoch))
+    
+    len_train = len(train_loader)
+    len_test = len(test_loader)
+    
+    test_iter = iter(test_loader)
     model.train()
 
     batch_time = AverageMeter()
     data_time = AverageMeter()
-    losses = AverageMeter()
-    accuracies = AverageMeter()
-
+    total_losses = AverageMeter()
+    train_label_accuracies = AverageMeter()
+    train_domain_accuracies = AverageMeter()
+    test_label_accuracies = AverageMeter()
+    test_domain_accuracies = AverageMeter()
+    
+    
     end_time = time.time()
-    for i, (inputs, targets, paths) in enumerate(data_loader):
+    
+    for i, (inputs, targets, paths) in enumerate(train_loader):
+    
+        p = float(i + epoch * len_train) / opt.n_epoch / len_train
+        alpha = 2. / (1. + np.exp(-10 * p)) - 1
+        
         data_time.update(time.time() - end_time)
+        batch_size = inputs.size(0)
         if not opt.no_cuda:
             targets = targets.cuda(async=True)
-        out_str = []
-        for clip_data in range(inputs.shape[0]):
-            for color in range(inputs.shape[1]):
-                out_str.append(inputs[clip_data][color].mean())
+
 
         inputs = Variable(inputs)
         targets = Variable(targets)
-        outputs = model(inputs)
-        loss = criterion(outputs, targets)
-        acc = calculate_accuracy(outputs, targets)
-
+        train_output_label,train_output_domain = model(inputs, alpha=alpha)
+        train_label_loss = criterion(train_output_label, targets)
+        train_label_acc = calculate_accuracy(train_output_label, targets)
+        train_domain_targets = torch.zeros(batch_size)
+        train_domain_loss = domain_criterion(train_output_domain,train_domain_targets)
+        train_domain_acc = calculate_accuracy(train_output_domain,train_domain_targets)
+        if i < len_test:
+            test_inputs,test_target = test_iter.next()
+            test_inputs = Variable(test_inputs)
+            test_output_label,test_output_domain = model(test_inputs, alpha=alpha)
+            test_label_loss = criterion(test_output_label, test_targets)
+            test_label_acc = calculate_accuracy(test_output_label, test_targets)
+            test_domain_label = torch.ones(batch_size)
+            test_domain_loss = domain_criterion(test_output_domain,test_domain_label)
+            test_domain_acc = calculate_accuracy(test_output_domain,test_domain_label)
+        
+        loss = train_label_loss+train_domain_loss+test_domain_loss
         losses.update(loss.item(), inputs.size(0))
         accuracies.update(acc, inputs.size(0))
+        
+        train_label_accuracies.update(train_label_acc, batch_size)
+        train_domain_accuracies.update(train_domain_acc, batch_size)
+        test_label_accuracies.update(test_label_acc, batch_size)
+        test_domain_accuracies.update(test_domain_acc, batch_size)
 
         optimizer.zero_grad()
         loss.backward()
@@ -65,11 +93,13 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
         batch_logger.log({
             'epoch': epoch,
             'batch': i + 1,
-            'iter': (epoch - 1) * len(data_loader) + (i + 1),
+            'iter': (epoch - 1) * len(train_loader) + (i + 1),
             'loss': losses.val,
-            'acc': accuracies.val,
+            'train_label_acc': train_label_accuracies.val,
+            'train_domain_acc': train_domain_accuracies.val,
+            'test_label_acc': test_label_accuracies.val,
+            'test_domain_acc': test_domain_accuracies.val,
             'lr': optimizer.param_groups[0]['lr'],
-            'means': ','.join([str(x) for x in out_str])
         })
 
         print('Epoch: [{0}][{1}/{2}]\t'
@@ -79,7 +109,7 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
               'Acc {acc.val:.3f} ({acc.avg:.3f})'.format(
                   epoch,
                   i + 1,
-                  len(data_loader),
+                  len(train_loader),
                   batch_time=batch_time,
                   data_time=data_time,
                   loss=losses,
@@ -87,7 +117,10 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
     epoch_logger.log({
         'epoch': epoch,
         'loss': losses.avg,
-        'acc': accuracies.avg,
+        'train_label_acc': train_label_accuracies.avg,
+        'train_domain_acc': train_domain_accuracies.avg,
+        'test_label_acc': test_label_accuracies.avg,
+        'test_domain_acc': test_domain_accuracies.avg,
         'lr': optimizer.param_groups[0]['lr']
     })
 
@@ -238,8 +271,15 @@ def main():
        json.dump(vars(opt), opt_file)
 
     torch.manual_seed(opt.manual_seed)
-    model = torchvision.models.video.r3d_18(pretrained=False, progress=True)
-    model.fc = nn.Linear(in_features=512, out_features=10, bias=True)
+    model = DANNmodel.DANN_resnet18(
+                num_classes=opt.n_classes,
+                shortcut_type=opt.resnet_shortcut,
+                sample_size=opt.sample_size,
+                sample_duration=opt.sample_duration)
+                
+                
+#     model = torchvision.models.video.r3d_18(pretrained=False, progress=True)
+#     model.fc = nn.Linear(in_features=512, out_features=10, bias=True)
     
     if not opt.no_cuda:
         model = model.cuda()
@@ -248,8 +288,10 @@ def main():
 #     model, parameters = generate_model(opt)
     print(model)
     criterion = nn.CrossEntropyLoss()
+    domain_criterion = nn.CrossEntropyLoss()
     if not opt.no_cuda:
         criterion = criterion.cuda()
+        domain_criterion.cuda()
     if not opt.no_train:
         crop_method = FixedScaleRandomCenterCrop(opt.sample_size,2)
         spatial_transforms = {}
@@ -343,11 +385,12 @@ def main():
         model.load_state_dict(checkpoint['state_dict'])
         if not opt.no_train:
             optimizer.load_state_dict(checkpoint['optimizer'])
-
+    
     print('run')
+    pdb.set_trace()
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
         if not opt.no_train:
-            train_epoch(i, train_loader, model, criterion, optimizer, opt,
+            train_epoch(i, train_loader, test_loader, model, criterion,domain_criterion, optimizer, opt,
                         train_logger, train_batch_logger)
         if not opt.no_val:
             validation_loss = val_epoch(i, val_loader, model, criterion, opt,
