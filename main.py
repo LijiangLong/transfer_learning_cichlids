@@ -271,7 +271,7 @@ def main():
        json.dump(vars(opt), opt_file)
 
     torch.manual_seed(opt.manual_seed)
-    pdb.set_trace()
+#     pdb.set_trace()
     model = DANN_model.DANN_resnet18(
                 num_classes=opt.n_classes,
                 shortcut_type=opt.resnet_shortcut,
@@ -388,7 +388,7 @@ def main():
             optimizer.load_state_dict(checkpoint['optimizer'])
     
     print('run')
-#     pdb.set_trace()
+    pdb.set_trace()
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
         if not opt.no_train:
             train_epoch(i, train_loader, test_loader, model, criterion,domain_criterion, optimizer, opt,
