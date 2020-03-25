@@ -107,7 +107,7 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
               'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
               'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
               'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-              'train_label_Acc {train_acc.val:.3f} ({train_acc.avg:.3f})\t
+              'train_label_Acc {train_acc.val:.3f} ({train_acc.avg:.3f})\t'
               'test_label_Acc {test_acc.val:.3f} ({test_acc.avg:.3f})'.format(
                   epoch,
                   i + 1,
