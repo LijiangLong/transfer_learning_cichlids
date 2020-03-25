@@ -49,7 +49,7 @@ def parse_opts():
         default=60,
         type=int,
         help='Height and width of inputs')
-        parser.add_argument(
+    parser.add_argument(
         '--sample_spacing',
         default=2,
         type=int,
