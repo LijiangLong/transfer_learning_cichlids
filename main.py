@@ -36,7 +36,7 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
 
     batch_time = AverageMeter()
     data_time = AverageMeter()
-    total_losses = AverageMeter()
+    losses = AverageMeter()
     train_label_accuracies = AverageMeter()
     train_domain_accuracies = AverageMeter()
     test_label_accuracies = AverageMeter()
