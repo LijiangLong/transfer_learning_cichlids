@@ -51,7 +51,7 @@ def parse_opts():
         help='Height and width of inputs')
     parser.add_argument(
         '--sample_spacing',
-        default=2,
+        default=1,
         type=int,
         help='spacing between spatial samplings')
     parser.add_argument(
@@ -85,7 +85,7 @@ def parse_opts():
         help='Patience of LR scheduler. See documentation of ReduceLROnPlateau.'
     )
     parser.add_argument(
-        '--batch_size', default=14, type=int, help='Batch Size')
+        '--batch_size', default=6, type=int, help='Batch Size')
     parser.add_argument(
         '--n_epochs',
         default=100,

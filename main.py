@@ -271,6 +271,7 @@ def main():
        json.dump(vars(opt), opt_file)
 
     torch.manual_seed(opt.manual_seed)
+    pdb.set_trace()
     model = DANN_model.DANN_resnet18(
                 num_classes=opt.n_classes,
                 shortcut_type=opt.resnet_shortcut,
@@ -293,7 +294,7 @@ def main():
         criterion = criterion.cuda()
         domain_criterion.cuda()
     if not opt.no_train:
-        crop_method = FixedScaleRandomCenterCrop(opt.sample_size,2)
+        crop_method = FixedScaleRandomCenterCrop(opt.sample_size,opt.sample_spacing)
         spatial_transforms = {}
         with open(opt.mean_file) as f:
             for i,line in enumerate(f):
@@ -346,7 +347,7 @@ def main():
                     continue
                 tokens = line.rstrip().split(',')
                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
-                spatial_transforms[tokens[0]] = Compose([CenterCrop(opt.sample_size,2),ToTensor(opt.norm_value), norm_method])
+                spatial_transforms[tokens[0]] = Compose([CenterCrop(opt.sample_size,opt.sample_spacing),ToTensor(opt.norm_value), norm_method])
 
         
 
@@ -387,7 +388,7 @@ def main():
             optimizer.load_state_dict(checkpoint['optimizer'])
     
     print('run')
-    pdb.set_trace()
+#     pdb.set_trace()
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
         if not opt.no_train:
             train_epoch(i, train_loader, test_loader, model, criterion,domain_criterion, optimizer, opt,
