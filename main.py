@@ -12,7 +12,7 @@ import pdb
 import pandas as pd
 import time
 
-from models import DANNmodel
+from models import DANN_model
 from opts import parse_opts
 from transforms import (
     Compose, Normalize, Scale, CenterCrop,
