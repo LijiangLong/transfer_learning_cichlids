@@ -39,8 +39,14 @@ def plot_accuracies(results_folder):
     
     
 def main():
-    results_folder = '/data/home/llong35/data/transfer_test/animal_split/CV10_3,MC16_2,MC6_5,MCxCVF1_12a_1,MCxCVF1_12b_1,TI2_4/results'
-    plot_accuracies(results_folder)
+    results_folders = ['/data/home/llong35/data/transfer_test/animal_split/CV10_3,MC16_2,MC6_5,MCxCVF1_12b_1,TI2_4,TI3_3/results',
+                       '/data/home/llong35/data/transfer_test/animal_split/MC16_2,MC6_5,MCxCVF1_12a_1,MCxCVF1_12b_1,TI2_4,TI3_3/results',
+                       '/data/home/llong35/data/transfer_test/animal_split/CV10_3,MC16_2,MC6_5,MCxCVF1_12a_1,TI2_4,TI3_3/results',
+                       '/data/home/llong35/data/transfer_test/animal_split/CV10_3,MC16_2,MCxCVF1_12a_1,MCxCVF1_12b_1,TI2_4,TI3_3/results',
+                       '/data/home/llong35/data/transfer_test/animal_split/CV10_3,MC6_5,MCxCVF1_12a_1,MCxCVF1_12b_1,TI2_4,TI3_3/results',
+                       '/data/home/llong35/data/transfer_test/animal_split/CV10_3,MC16_2,MC6_5,MCxCVF1_12a_1,MCxCVF1_12b_1,TI3_3/results']
+    for results_folder in results_folders:
+        plot_accuracies(results_folder)
 
 if __name__ == '__main__':
     main()
