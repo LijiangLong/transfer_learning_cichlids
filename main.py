@@ -37,6 +37,7 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
     batch_time = AverageMeter()
     data_time = AverageMeter()
     losses = AverageMeter()
+    domain_losses = AverageMeter()
     train_label_accuracies = AverageMeter()
     train_domain_accuracies = AverageMeter()
     test_label_accuracies = AverageMeter()
@@ -48,7 +49,7 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
     for i, (inputs, targets, paths) in enumerate(train_loader):
     
         p = float(i + epoch * len_train) / opt.n_epochs / len_train
-        alpha = 7. / (1. + np.exp(-5 * p)) - 1
+        alpha = 3. / (1. + np.exp(-2 * p)) - 1
         
         data_time.update(time.time() - end_time)
         batch_size = inputs.size(0)
@@ -76,9 +77,10 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
             test_domain_label = torch.ones(batch_size).long().cuda()
             test_domain_loss = domain_criterion(test_output_domain,test_domain_label)
             test_domain_acc = calculate_accuracy(test_output_domain,test_domain_label)
-        
-        loss = train_label_loss+train_domain_loss+test_domain_loss
+        domain_loss = train_domain_loss+test_domain_loss
+        loss = train_label_loss+domain_loss
         losses.update(loss.item(), batch_size)
+        domain_losses.update(domain_loss.item(), batch_size)
         
         train_label_accuracies.update(train_label_acc, batch_size)
         train_domain_accuracies.update(train_domain_acc, batch_size)
@@ -120,6 +122,7 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
     epoch_logger.log({
         'epoch': epoch,
         'loss': losses.avg,
+        'domain_loss':domain_losses.avg,
         'train_label_acc': train_label_accuracies.avg,
         'train_domain_acc': train_domain_accuracies.avg,
         'test_label_acc': test_label_accuracies.avg,
@@ -325,7 +328,7 @@ def main():
             pin_memory=True)
         train_logger = Logger(
             os.path.join(opt.result_path, 'train.log'),
-            ['epoch', 'loss', 'train_label_acc','train_domain_acc','test_label_acc','test_domain_acc', 'lr','alpha'])
+            ['epoch', 'loss','domain_loss', 'train_label_acc','train_domain_acc','test_label_acc','test_domain_acc', 'lr','alpha'])
         train_batch_logger = Logger(
             os.path.join(opt.result_path, 'train_batch.log'),
             ['epoch', 'batch', 'iter', 'loss', 'train_label_acc','train_domain_acc','test_label_acc','test_domain_acc','lr'])
