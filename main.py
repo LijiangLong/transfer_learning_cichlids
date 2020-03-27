@@ -49,7 +49,7 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
     for i, (inputs, targets, paths) in enumerate(train_loader):
     
         p = float(i + epoch * len_train) / opt.n_epochs / len_train
-        alpha = 7. / (1. + np.exp(-2 * p)) - 1
+        alpha = 20. / (1. + np.exp(-2 * p)) - 1
         
         data_time.update(time.time() - end_time)
         batch_size = inputs.size(0)
@@ -235,7 +235,7 @@ def test_epoch(epoch, data_loader, model, criterion, opt, logger):
             
             inputs = Variable(inputs)
             targets = Variable(targets)
-            outputs = model(inputs)
+            outputs,_ = model(inputs,alpha=1)
             loss = criterion(outputs, targets)
             acc = calculate_accuracy(outputs, targets)
             losses.update(loss.item(), inputs.size(0))
@@ -407,8 +407,8 @@ def main():
 
         if not opt.no_train and not opt.no_val:
             scheduler.step(validation_loss)
-#         if not opt.no_test:
-#             test_epoch(i, test_loader, model, criterion, opt,
-#                                         test_logger)
+        if not opt.no_test and i%5==0:
+            test_epoch(i, test_loader, model, criterion, opt,
+                                        test_logger)
 if __name__ == '__main__':
     main()
