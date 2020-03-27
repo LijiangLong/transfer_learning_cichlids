@@ -13,7 +13,7 @@ def create_random_spliting_train_test(annotation_file,
                                         data_folder,
                                         n_training=3,
                                         split_ratio = 0.8,
-                                        training_sample_size = 10000,
+                                        training_sample_size = 9500,
                                         val_sample_size = 1000,
                                         test_sample_size = 1000):
 #     animals_list = ['MC16_2', 'MC6_5', 'MCxCVF1_12a_1', 'MCxCVF1_12b_1', 'TI2_4', 'TI3_3', 'CV10_3']
