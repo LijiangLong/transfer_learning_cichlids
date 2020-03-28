@@ -25,12 +25,12 @@ def plot_accuracies(results_folder):
     
     train_epochs,training_acc = interpret_log(training_file)
     val_epochs,val_acc = interpret_log(val_file)
-    test_epochs,test_acc = interpret_log(test_file)
+#     test_epochs,test_acc = interpret_log(test_file)
     
     fig = plt.figure()
     plt.plot(train_epochs,training_acc,label='training accuracy')
-    plt.plot(val_epochs,val_acc,label='validation accuracy')
-    plt.plot(test_epochs,test_acc,label='test accuracy')
+    plt.plot(val_epochs,val_acc,label='test accuracy')
+#     plt.plot(test_epochs,test_acc,label='test accuracy')
     plt.legend()
 #     pdb.set_trace()
     plt.xticks(np.arange(0, train_epochs[-1]+1, 5))
