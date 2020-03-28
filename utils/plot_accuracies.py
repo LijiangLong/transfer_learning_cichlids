@@ -36,7 +36,7 @@ def plot_accuracies(results_folder):
     plt.xticks(np.arange(0, train_epochs[-1]+1, 5))
     plt.yticks(np.arange(0, 1, 0.1))
     plt.xlabel('epoch')
-    plt.ylable('accuracy')
+    plt.ylabel('accuracy')
     plt.savefig(output_file)
     
     
