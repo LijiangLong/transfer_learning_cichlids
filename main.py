@@ -49,10 +49,11 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
     
     for i, (inputs, targets, paths) in enumerate(train_loader):
     
-#         x = float(i + epoch * len_train) / opt.n_epochs / len_train
-        alpha = 2*previous_domain_accuracy-0.9
-        if alpha < 0:
-            alpha = 0
+        p = float(i + epoch * len_train) / opt.n_epochs / len_train
+        alpha = 2. / (1. + np.exp(-10 * p)) - 1
+#         alpha = 2*previous_domain_accuracy-0.9
+#         if alpha < 0:
+#             alpha = 0
         
         data_time.update(time.time() - end_time)
         batch_size = inputs.size(0)
