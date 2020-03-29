@@ -25,7 +25,7 @@ from utils import Logger,AverageMeter, calculate_accuracy
 
 
 def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criterion,optimizer, opt,
-                epoch_logger, batch_logger):
+                epoch_logger, batch_logger,previous_domain_accuracy):
     print('train at epoch {}'.format(epoch))
     
     len_train = len(train_loader)
@@ -46,10 +46,13 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
     
     end_time = time.time()
     
+    
     for i, (inputs, targets, paths) in enumerate(train_loader):
     
-        x = float(i + epoch * len_train) / opt.n_epochs / len_train
-        alpha = 10/(1+4*np.exp(-30*(x-0.7)))
+#         x = float(i + epoch * len_train) / opt.n_epochs / len_train
+        alpha = previous_domain_accuracy-0.4
+        if alpha < 0:
+            alpha = 0
         
         data_time.update(time.time() - end_time)
         batch_size = inputs.size(0)
@@ -140,6 +143,8 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
             'optimizer': optimizer.state_dict(),
         }
         torch.save(states, save_file_path)
+    domain_average_acc = (train_domain_accuracies.avg+test_domain_accuracies.avg)/2
+    return domain_average_acc
 
 def val_epoch(epoch, data_loader, model, criterion, opt, logger):
     print('validation at epoch {}'.format(epoch))
@@ -397,18 +402,20 @@ def main():
             optimizer.load_state_dict(checkpoint['optimizer'])
     
     print('run')
+    previous_domain_accuracy = 0.5
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
         if not opt.no_train:
-            train_epoch(i, train_loader, test_loader, model, criterion,domain_criterion, optimizer, opt,
-                        train_logger, train_batch_logger)
+            domain_average_acc = train_epoch(i, train_loader, test_loader, model, criterion,domain_criterion, optimizer, opt,
+                        train_logger, train_batch_logger,previous_domain_accuracy)
+            previous_domain_accuracy = domain_average_acc
         if not opt.no_val:
             validation_loss = val_epoch(i, val_loader, model, criterion, opt,
                                         val_logger)
 
         if not opt.no_train and not opt.no_val:
             scheduler.step(validation_loss)
-        if not opt.no_test and i%5==0:
-            test_epoch(i, test_loader, model, criterion, opt,
-                                        test_logger)
+#         if not opt.no_test and i%5==0:
+#             test_epoch(i, test_loader, model, criterion, opt,
+#                                         test_logger)
 if __name__ == '__main__':
     main()
