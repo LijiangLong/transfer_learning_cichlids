@@ -50,7 +50,7 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
     for i, (inputs, targets, paths) in enumerate(train_loader):
     
 #         x = float(i + epoch * len_train) / opt.n_epochs / len_train
-        alpha = previous_domain_accuracy-0.4
+        alpha = 2*previous_domain_accuracy-0.9
         if alpha < 0:
             alpha = 0
         
