@@ -80,7 +80,7 @@ def parse_opts():
         help='Currently only support SGD')
     parser.add_argument(
         '--lr_patience',
-        default=10,
+        default=5,
         type=int,
         help='Patience of LR scheduler. See documentation of ReduceLROnPlateau.'
     )
