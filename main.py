@@ -81,15 +81,20 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
             test_domain_label = torch.ones(batch_size).long().cuda()
             test_domain_loss = domain_criterion(test_output_domain,test_domain_label)
             test_domain_acc = calculate_accuracy(test_output_domain,test_domain_label)
-        domain_loss = train_domain_loss+test_domain_loss
-        loss = train_label_loss+domain_loss
+            domain_loss = train_domain_loss+test_domain_loss
+            loss = train_label_loss+domain_loss
+            test_label_accuracies.update(test_label_acc, batch_size)
+            test_domain_accuracies.update(test_domain_acc, batch_size)
+            
+        else:
+            domain_loss = train_domain_loss
+            loss = train_label_loss+train_domain_loss
+
         losses.update(loss.item(), batch_size)
         domain_losses.update(domain_loss.item(), batch_size)
-        
         train_label_accuracies.update(train_label_acc, batch_size)
         train_domain_accuracies.update(train_domain_acc, batch_size)
-        test_label_accuracies.update(test_label_acc, batch_size)
-        test_domain_accuracies.update(test_domain_acc, batch_size)
+
 
         optimizer.zero_grad()
         loss.backward()
