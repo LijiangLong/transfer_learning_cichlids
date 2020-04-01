@@ -150,7 +150,8 @@ def train_epoch(epoch, train_loader,test_loader, model, criterion, domain_criter
         }
         torch.save(states, save_file_path)
     domain_average_acc = (train_domain_accuracies.avg+test_domain_accuracies.avg)/2
-    return domain_average_acc
+    
+    return domain_average_acc,losses.avg
 
 def val_epoch(epoch, data_loader, model, criterion, opt, logger):
     print('validation at epoch {}'.format(epoch))
@@ -411,7 +412,7 @@ def main():
     previous_domain_accuracy = 0.5
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
         if not opt.no_train:
-            domain_average_acc = train_epoch(i, train_loader, test_loader, model, criterion,domain_criterion, optimizer, opt,
+            domain_average_acc,training_loss = train_epoch(i, train_loader, test_loader, model, criterion,domain_criterion, optimizer, opt,
                         train_logger, train_batch_logger,previous_domain_accuracy)
             previous_domain_accuracy = domain_average_acc
         if not opt.no_val:
@@ -419,7 +420,7 @@ def main():
                                         val_logger)
 
         if not opt.no_train and not opt.no_val:
-            scheduler.step(validation_loss)
+            scheduler.step(training_loss)
 #         if not opt.no_test and i%5==0:
 #             test_epoch(i, test_loader, model, criterion, opt,
 #                                         test_logger)
