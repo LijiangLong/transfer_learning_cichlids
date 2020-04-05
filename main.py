@@ -268,7 +268,6 @@ def main():
 
         temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
         target_transform = ClassLabel()
-        pdb.set_trace()
         training_data = get_training_set(opt, spatial_transforms,
                                          temporal_transform, target_transform, annotationDictionary)
         train_loader = torch.utils.data.DataLoader(
