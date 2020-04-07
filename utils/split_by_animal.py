@@ -15,11 +15,12 @@ def create_random_spliting_train_test(annotation_file,
                                         split_ratio = 0.8,
                                         training_sample_size = 9500,
                                         val_sample_size = 2000,
-                                        test_sample_size = -1):
+                                        test_sample_size = -1,
+                                        test_in_train = 100):
     animals_list = ['MC16_2', 'MC6_5', 'MCxCVF1_12a_1', 'MCxCVF1_12b_1', 'TI2_4', 'TI3_3', 'CV10_3']
     training = np.sort(np.random.choice(animals_list, n_training, replace=False))
-#     training = ['MC16_2', 'MC6_5', 'MCxCVF1_12a_1', 'MCxCVF1_12b_1', 'TI2_4', 'TI3_3']
-    result_dir = os.path.join(master_dir,','.join(training)+'10000test')
+    training = ['MC6_5', 'MCxCVF1_12a_1', 'MCxCVF1_12b_1', 'TI2_4', 'TI3_3', 'CV10_3']
+    result_dir = os.path.join(master_dir,','.join(training)+'testintrain'+str(test_in_train))
     if os.path.isdir(result_dir):
         return
     else:
@@ -42,8 +43,13 @@ def create_random_spliting_train_test(annotation_file,
         output_string = row['Label']+'/'+row['Location']+'\n'
         animal = row['MeanID'].split(':')[0]
         #first determine if this is train/validation or test
+        test_in_train_cnt = 0
         if animal not in training:
-            test_list.append(output_string)
+            if test_in_train > 0 and test_in_train_cnt < test_in_train:
+                train_list.append(output_string)
+                test_in_train_cnt += 1
+            else:
+                test_list.append(output_string)
             continue
         #if train/validation, determine if this go to train or validation
         if np.random.uniform() < split_ratio:
@@ -70,7 +76,7 @@ def create_random_spliting_train_test(annotation_file,
                 val_output.write(output_string)
     with open(test_list_csv,'w') as test_output:
         if test_sample_size > len(test_list):
-            print('not enough validation data to sample')
+            print('not enough test data to sample')
             raise
         if test_sample_size != -1:
             test_list = np.random.choice(test_list, test_sample_size, replace=False)
