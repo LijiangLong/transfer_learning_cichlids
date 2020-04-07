@@ -43,13 +43,8 @@ def create_random_spliting_train_test(annotation_file,
         output_string = row['Label']+'/'+row['Location']+'\n'
         animal = row['MeanID'].split(':')[0]
         #first determine if this is train/validation or test
-        test_in_train_cnt = 0
         if animal not in training:
-            if test_in_train > 0 and test_in_train_cnt < test_in_train:
-                train_list.append(output_string)
-                test_in_train_cnt += 1
-            else:
-                test_list.append(output_string)
+            test_list.append(output_string)
             continue
         #if train/validation, determine if this go to train or validation
         if np.random.uniform() < split_ratio:
@@ -64,8 +59,12 @@ def create_random_spliting_train_test(annotation_file,
             raise
         if training_sample_size != -1:
             train_list = np.random.choice(train_list, training_sample_size, replace=False)
+            test_in_train_list = np.random.choice(test_list, test_in_train, replace=False)
             for output_string in train_list:
                 train_output.write(output_string)
+            for output_string in test_in_train_list:
+                train_output.write(output_string)
+            
     with open(val_list_csv,'w') as val_output:
         if val_sample_size > len(val_list):
             print('not enough validation data to sample')
@@ -75,12 +74,14 @@ def create_random_spliting_train_test(annotation_file,
             for output_string in val_list:
                 val_output.write(output_string)
     with open(test_list_csv,'w') as test_output:
-        if test_sample_size > len(test_list):
-            print('not enough test data to sample')
-            raise
-        if test_sample_size != -1:
-            test_list = np.random.choice(test_list, test_sample_size, replace=False)
+        # if test_sample_size > len(test_list):
+#             print('not enough test data to sample')
+#             raise
+#         if test_sample_size != -1:
+#             test_list = np.random.choice(test_list, test_sample_size, replace=False)
         for output_string in test_list:
+            temp = set(test_in_train_list)
+            if output_string not in temp:
                 test_output.write(output_string)
             
     
