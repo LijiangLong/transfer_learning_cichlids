@@ -119,7 +119,7 @@ def parse_opts():
         '--no_val',
         action='store_true',
         help='If true, validation is not performed.')
-    parser.set_defaults(no_val=False)
+    parser.set_defaults(no_val=True)
     parser.add_argument(
         '--no_test', action='store_true', help='If true, test is performed.')
     parser.set_defaults(no_test=False)

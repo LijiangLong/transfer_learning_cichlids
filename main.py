@@ -347,6 +347,15 @@ def main():
             os.path.join(opt.result_path, 'val.log'), ['epoch', 'loss', 'acc'])
 
     if not opt.no_test:
+        spatial_transforms = {}
+        with open(opt.mean_file) as f:
+            for i,line in enumerate(f):
+                if i==0:
+                    continue
+                tokens = line.rstrip().split(',')
+                norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
+                spatial_transforms[tokens[0]] = Compose([CenterCrop(opt.sample_size,2),ToTensor(opt.norm_value), norm_method])
+
         temporal_transform = TemporalCenterCrop(opt.sample_duration)
         target_transform = ClassLabel()
         test_data = get_test_set(
