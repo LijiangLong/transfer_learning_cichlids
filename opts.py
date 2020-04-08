@@ -100,7 +100,7 @@ def parse_opts():
         help='Number of validation samples for each activity')
     parser.add_argument(
         '--resume_path',
-        default='',
+        default='save_80.pth',
         type=str,
         help='Save data (.pth) of previous training')
     parser.add_argument(
@@ -114,12 +114,12 @@ def parse_opts():
         '--no_train',
         action='store_true',
         help='If true, training is not performed.')
-    parser.set_defaults(no_train=False)
+    parser.set_defaults(no_train=True)
     parser.add_argument(
         '--no_val',
         action='store_true',
         help='If true, validation is not performed.')
-    parser.set_defaults(no_val=False)
+    parser.set_defaults(no_val=True)
     parser.add_argument(
         '--no_test', action='store_true', help='If true, test is performed.')
     parser.set_defaults(no_test=False)

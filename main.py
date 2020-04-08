@@ -185,7 +185,11 @@ def test_epoch(epoch, data_loader, model, criterion, opt, logger):
     accuracies = AverageMeter()
 
     end_time = time.time()
-
+    #########  temp line, needs to be removed##################################
+    file  = 'epoch_'+ str(epoch)+'_test_matrix.csv'
+    confusion_matrix = np.zeros((opt.n_classes,opt.n_classes))
+    confidence_for_each_validation = {}
+    ###########################################################################
     for i, (inputs, targets, paths) in enumerate(data_loader):
         data_time.update(time.time() - end_time)
 
@@ -200,7 +204,17 @@ def test_epoch(epoch, data_loader, model, criterion, opt, logger):
             acc = calculate_accuracy(outputs, targets)
             losses.update(loss.item(), inputs.size(0))
             accuracies.update(acc, inputs.size(0))
-
+            #########  temp line, needs to be removed##################################
+            for j in range(len(targets)):
+                confidence_for_each_validation[paths[j]] = [x.item() for x in outputs[j]]
+            
+            rows = [int(x) for x in targets]
+            columns = [int(x) for x in np.argmax(outputs.cpu(),1)]
+            assert len(rows) == len(columns)
+            for idx in range(len(rows)):
+                confusion_matrix[rows[idx]][columns[idx]] +=1
+            
+            ###########################################################################
             batch_time.update(time.time() - end_time)
             end_time = time.time()
 
@@ -216,7 +230,14 @@ def test_epoch(epoch, data_loader, model, criterion, opt, logger):
                       data_time=data_time,
                       loss=losses,
                       acc=accuracies))
-
+    #########  temp line, needs to be removed##################################
+    print(confusion_matrix)
+    confusion_matrix = pd.DataFrame(confusion_matrix)
+    confusion_matrix.to_csv(opt.result_path + '/TestConfusionMatrix_' + str(epoch) + '.csv')
+    confidence_matrix = pd.DataFrame.from_dict(confidence_for_each_validation, orient='index')
+    confidence_matrix.to_csv(opt.result_path + '/TestConfidenceMatrix.csv')
+    
+    #########  temp line, needs to be removed##################################
     
     logger.log({'epoch': epoch, 'loss': losses.avg, 'acc': accuracies.avg})
 
@@ -224,6 +245,7 @@ def test_epoch(epoch, data_loader, model, criterion, opt, logger):
 
 
 def main():
+    pdb.set_trace()
     opt = parse_opts()
     if opt.root_path != '':
         opt.video_path = os.path.join(opt.root_path, opt.video_path)
