@@ -368,7 +368,7 @@ def main():
             pin_memory=True)
         test_logger = Logger(
             os.path.join(opt.result_path, 'test.log'), ['epoch', 'loss', 'acc'])
-#     pdb.set_trace()
+    pdb.set_trace()
     if opt.resume_path:
         print('loading checkpoint {}'.format(opt.resume_path))
         checkpoint = torch.load(opt.resume_path)
@@ -378,7 +378,7 @@ def main():
         model.load_state_dict(checkpoint['state_dict'])
         if not opt.no_train:
             optimizer.load_state_dict(checkpoint['optimizer'])
-
+    
     print('run')
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
         if not opt.no_train:
