@@ -254,7 +254,7 @@ def main():
         if not os.path.exists(opt.result_path):
             os.mkdir(opt.result_path)
         if opt.resume_path:
-            opt.resume_path = os.path.join(opt.root_path, opt.resume_path)
+            opt.resume_path = os.path.join(opt.result_path, opt.resume_path)
     print(opt)
     with open(os.path.join(opt.result_path, 'opts.json'), 'w') as opt_file:
        json.dump(vars(opt), opt_file)
@@ -320,7 +320,7 @@ def main():
             nesterov=opt.nesterov)
         scheduler = lr_scheduler.ReduceLROnPlateau(
             optimizer, 'min', patience=opt.lr_patience)
-    pdb.set_trace()
+    
     if not opt.no_val:
         spatial_transforms = {}
         with open(opt.mean_file) as f:
@@ -359,6 +359,7 @@ def main():
             pin_memory=True)
         test_logger = Logger(
             os.path.join(opt.result_path, 'test.log'), ['epoch', 'loss', 'acc'])
+    pdb.set_trace()
     if opt.resume_path:
         print('loading checkpoint {}'.format(opt.resume_path))
         checkpoint = torch.load(opt.resume_path)
