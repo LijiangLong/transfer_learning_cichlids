@@ -245,7 +245,7 @@ def test_epoch(epoch, data_loader, model, criterion, opt, logger):
 
 
 def main():
-    pdb.set_trace()
+    
     opt = parse_opts()
     if opt.root_path != '':
         opt.video_path = os.path.join(opt.root_path, opt.video_path)
@@ -270,6 +270,12 @@ def main():
 #     model, parameters = generate_model(opt)
     print(model)
     criterion = nn.CrossEntropyLoss()
+    
+    annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
+    keys = annotateData['Location']
+    values = annotateData['MeanID']
+
+    annotationDictionary = dict(zip(keys, values))
     if not opt.no_cuda:
         criterion = criterion.cuda()
     if not opt.no_train:
@@ -282,11 +288,7 @@ def main():
                 tokens = line.rstrip().split(',')
                 norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
                 spatial_transforms[tokens[0]] = Compose([crop_method, RandomHorizontalFlip(),RandomVerticalFlip(), ToTensor(opt.norm_value), norm_method])
-        annotateData = pd.read_csv(opt.annotation_file, sep = ',', header = 0)
-        keys = annotateData['Location']
-        values = annotateData['MeanID']
 
-        annotationDictionary = dict(zip(keys, values))
 
         temporal_transform = TemporalCenterRandomCrop(opt.sample_duration)
         target_transform = ClassLabel()
@@ -318,6 +320,7 @@ def main():
             nesterov=opt.nesterov)
         scheduler = lr_scheduler.ReduceLROnPlateau(
             optimizer, 'min', patience=opt.lr_patience)
+    pdb.set_trace()
     if not opt.no_val:
         spatial_transforms = {}
         with open(opt.mean_file) as f:
