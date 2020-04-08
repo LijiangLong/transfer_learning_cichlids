@@ -83,7 +83,7 @@ def parse_opts():
         '--batch_size', default=14, type=int, help='Batch Size')
     parser.add_argument(
         '--n_epochs',
-        default=80,
+        default=70,
         type=int,
         help='Number of total epochs to run')
     parser.add_argument(
@@ -100,7 +100,7 @@ def parse_opts():
         help='Number of validation samples for each activity')
     parser.add_argument(
         '--resume_path',
-        default='save_80.pth',
+        default='save_70.pth',
         type=str,
         help='Save data (.pth) of previous training')
     parser.add_argument(
