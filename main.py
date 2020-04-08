@@ -368,7 +368,7 @@ def main():
             pin_memory=True)
         test_logger = Logger(
             os.path.join(opt.result_path, 'test.log'), ['epoch', 'loss', 'acc'])
-    pdb.set_trace()
+#     pdb.set_trace()
     if opt.resume_path:
         print('loading checkpoint {}'.format(opt.resume_path))
         checkpoint = torch.load(opt.resume_path)
