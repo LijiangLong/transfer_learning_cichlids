@@ -254,7 +254,7 @@ def main():
         if not os.path.exists(opt.result_path):
             os.mkdir(opt.result_path)
         if opt.resume_path:
-            opt.resume_path = os.path.join(opt.result_path, opt.resume_path)
+            opt.resume_path = os.path.join(opt.root_path, opt.resume_path)
     print(opt)
     with open(os.path.join(opt.result_path, 'opts.json'), 'w') as opt_file:
        json.dump(vars(opt), opt_file)
@@ -347,15 +347,6 @@ def main():
             os.path.join(opt.result_path, 'val.log'), ['epoch', 'loss', 'acc'])
 
     if not opt.no_test:
-        spatial_transforms = {}
-        with open(opt.mean_file) as f:
-            for i,line in enumerate(f):
-                if i==0:
-                    continue
-                tokens = line.rstrip().split(',')
-                norm_method = Normalize([float(x) for x in tokens[1:4]], [float(x) for x in tokens[4:7]]) 
-                spatial_transforms[tokens[0]] = Compose([CenterCrop(opt.sample_size,2),ToTensor(opt.norm_value), norm_method])
-
         temporal_transform = TemporalCenterCrop(opt.sample_duration)
         target_transform = ClassLabel()
         test_data = get_test_set(
@@ -368,17 +359,16 @@ def main():
             pin_memory=True)
         test_logger = Logger(
             os.path.join(opt.result_path, 'test.log'), ['epoch', 'loss', 'acc'])
-    pdb.set_trace()
     if opt.resume_path:
         print('loading checkpoint {}'.format(opt.resume_path))
         checkpoint = torch.load(opt.resume_path)
-#         assert opt.arch == checkpoint['arch']
+        assert opt.arch == checkpoint['arch']
 
         opt.begin_epoch = checkpoint['epoch']
         model.load_state_dict(checkpoint['state_dict'])
         if not opt.no_train:
             optimizer.load_state_dict(checkpoint['optimizer'])
-    
+
     print('run')
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
         if not opt.no_train:
@@ -390,6 +380,7 @@ def main():
 
         if not opt.no_train and not opt.no_val:
             scheduler.step(validation_loss)
+        pdb.set_trace()
         if not opt.no_test:
             test_epoch(i, test_loader, model, criterion, opt,
                                         test_logger)
