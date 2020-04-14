@@ -371,7 +371,7 @@ def main():
     if opt.resume_path:
         print('loading checkpoint {}'.format(opt.resume_path))
         checkpoint = torch.load(opt.resume_path)
-        assert opt.arch == checkpoint['arch']
+#         assert opt.arch == checkpoint['arch']
 
         opt.begin_epoch = checkpoint['epoch']
         model.load_state_dict(checkpoint['state_dict'])
