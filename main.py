@@ -239,7 +239,7 @@ def test_epoch(epoch, data_loader, model, criterion, opt, logger):
     
     #########  temp line, needs to be removed##################################
     
-    logger.log({'epoch': epoch, 'loss': losses.avg, 'acc': accuracies.avg})
+#     logger.log({'epoch': epoch, 'loss': losses.avg, 'acc': accuracies.avg})
 
     return losses.avg
 
@@ -367,7 +367,7 @@ def main():
             num_workers=opt.n_threads,
             pin_memory=True)
         test_logger = Logger(
-            os.path.join(opt.result_path, 'test.log'), ['epoch', 'loss', 'acc'])
+            os.path.join(opt.result_path, 'test_new.log'), ['epoch', 'loss', 'acc'])
     if opt.resume_path:
         print('loading checkpoint {}'.format(opt.resume_path))
         checkpoint = torch.load(opt.resume_path)
